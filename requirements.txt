@@ -2,4 +2,10 @@
 # numpy
 # scipy>=0.9
 
+numpy
+pygeobase
+netcdf4
+pyresample
+repurpose
+pynetcf
 parse
