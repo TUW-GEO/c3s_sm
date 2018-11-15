@@ -326,22 +326,6 @@ class C3S_Nc_Img_Stack(MultiTemporalImageBase):
 
         return timestamps
 
-if __name__ == '__main__':
-
-    afile = r"H:\code\c3s_sm_reader\tests\test-data\img\TCDR\061_monthlyImages\combined\C3S-SOILMOISTURE-L3S-SSMV-COMBINED-MONTHLY-20160401000000-TCDR-v201801.0.0.nc"
-    img = C3SImg(afile, 'sm', 'r', subgrid=C3SLandGrid(), array_1D=True)
-    image = img.read()
-
-    afile = r"C:\Temp\tcdr\active_daily"
-    ds = C3S_Nc_Img_Stack(afile, parameters=['sm'],
-                 subgrid=C3SLandGrid(), array_1D=True)
-
-    path = r'C:\Users\wpreimes\AppData\Local\Temp\tmphbaubd'
-    ds = C3STs(path)
-    ts = ds.read(-159.625, 65.875)
-    cd = ds.read_cell(2244)
-    img = ds.read(timestamp=datetime(1991,8,6))
-
 
 
 

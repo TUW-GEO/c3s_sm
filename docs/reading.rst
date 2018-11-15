@@ -16,7 +16,7 @@ Reading by file name
     # read several parameters
     parameter = ['sm', 'sm_uncertainty']
     # the class is initialized with the exact filename.
-    image_path = os.path.join(os.path.dirname(__file__), 'tests', 'test-data',
+    image_path = os.path.join(os.path.dirname(__file__), 'tests', 'c3s_sm-test-data',
                               'img', 'ICDR', '060_dailyImages', 'combined', '2017')
     image_file = 'C3S-SOILMOISTURE-L3S-SSMV-COMBINED-DAILY-20170701000000-ICDR-v201706.0.0.nc'
     img = C3SImg(os.path.join(image_path, image_file), parameter=parameter)
@@ -48,7 +48,7 @@ The filename is automatically built from the given date.
 
     parameter = 'sm'
     img = C3S_Nc_Img_Stack(data_path=os.path.join(os.path.dirname(__file__),
-                                                    'tests', 'test-data', 'img',
+                                                    'tests', 'c3s_sm-test-data', 'img',
                                                     'ICDR', '061_monthlyImages', 'passive'),
                               parameter=parameter)
 

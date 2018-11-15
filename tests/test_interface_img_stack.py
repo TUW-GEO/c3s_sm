@@ -10,7 +10,7 @@ def test_c3s_timestamp_for_daterange():
     parameters = ['sm', 'sm_noise']
 
     path = os.path.join(os.path.dirname(__file__),
-                        'test-data', 'img', 'TCDR', '060_dailyImages', 'combined')
+                        'c3s_sm-test-data', 'img', 'TCDR', '060_dailyImages', 'combined')
 
     ds = C3S_Nc_Img_Stack(path, parameters)
 
@@ -28,7 +28,7 @@ def test_c3s_img_stack_single_img_reading():
     parameters = ['sm']
 
     path = os.path.join(os.path.dirname(__file__),
-                        'test-data', 'img', 'TCDR', '060_dailyImages', 'combined')
+                        'c3s_sm-test-data', 'img', 'TCDR', '060_dailyImages', 'combined')
 
     ds = C3S_Nc_Img_Stack(path, parameters)
 
@@ -42,7 +42,7 @@ def test_c3s_img_stack_multiple_img_reading_TCDR():
     parameters = ['sm']
 
     path = os.path.join(os.path.dirname(__file__),
-                        'test-data', 'img', 'TCDR', '061_monthlyImages', 'combined')
+                        'c3s_sm-test-data', 'img', 'TCDR', '061_monthlyImages', 'combined')
 
     ds = C3S_Nc_Img_Stack(path, parameters)
 
@@ -63,7 +63,7 @@ def test_c3s_img_stack_multiple_img_reading_ICDR():
     parameters = ['sm']
 
     path = os.path.join(os.path.dirname(__file__),
-                        'test-data', 'img', 'ICDR', '061_monthlyImages', 'passive')
+                        'c3s_sm-test-data', 'img', 'ICDR', '061_monthlyImages', 'passive')
 
     ds = C3S_Nc_Img_Stack(path, parameters)
 

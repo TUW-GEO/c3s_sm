@@ -12,7 +12,7 @@ from c3s_sm.interface import C3STs
 
 def test_parse_filename():
     inpath = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                          "test-data", "img2ts", "ICDR", "combined")
+                          "c3s_sm-test-data", "img2ts", "ICDR", "combined")
 
     file_args, file_vars = parse_filename(inpath)
 
@@ -32,7 +32,7 @@ def test_parse_filename():
 
 def test_reshuffle_TCDR_daily():
     inpath = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                          "test-data", "img2ts", "TCDR", "active")
+                          "c3s_sm-test-data", "img2ts", "TCDR", "active")
     startdate = "1991-08-05"
     enddate = "1991-08-08"
     #parameters = ["sm", "sm_uncertainty", "dnflag", "flag", "freqbandID", "mode", "sensor", "t0"]
@@ -67,7 +67,7 @@ def test_reshuffle_TCDR_daily():
 
 def test_reshuffle_ICDR_monthly():
     inpath = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                          "test-data", "img2ts", "ICDR", "combined")
+                          "c3s_sm-test-data", "img2ts", "ICDR", "combined")
     startdate = "2018-05-01"
     enddate = "2018-08-01"
     parameters = ['--parameters', "sm", "sensor"]

@@ -7,7 +7,7 @@ import numpy.testing as nptest
 # lat=48.125, lon=16.375
 def test_C33Ts_tcdr_combined_daily():
     file = os.path.join(os.path.join(os.path.dirname(__file__),
-                        'test-data', 'img', 'TCDR', '060_dailyImages', 'combined', '2014',
+                        'c3s_sm-test-data', 'img', 'TCDR', '060_dailyImages', 'combined', '2014',
                         'C3S-SOILMOISTURE-L3S-SSMV-COMBINED-DAILY-20140101000000-TCDR-v201801.0.0.nc'))
 
 
@@ -23,7 +23,7 @@ def test_C33Ts_tcdr_combined_daily():
 def test_C33Ts_tcdr_active_monthly():
 
     file = os.path.join(os.path.join(os.path.dirname(__file__),
-                        'test-data', 'img', 'TCDR', '061_monthlyImages', 'active',
+                        'c3s_sm-test-data', 'img', 'TCDR', '061_monthlyImages', 'active',
                         'C3S-SOILMOISTURE-L3S-SSMS-ACTIVE-MONTHLY-20140101000000-TCDR-v201801.0.0.nc'))
 
 
@@ -38,7 +38,7 @@ def test_C33Ts_tcdr_active_monthly():
 
 def test_C33Ts_tcdr_passive_decadal():
     file = os.path.join(os.path.join(os.path.dirname(__file__),
-                        'test-data', 'img', 'TCDR', '062_dekadalImages', 'passive',
+                        'c3s_sm-test-data', 'img', 'TCDR', '062_dekadalImages', 'passive',
                         'C3S-SOILMOISTURE-L3S-SSMV-PASSIVE-DEKADAL-20140101000000-TCDR-v201801.0.0.nc'))
 
 
@@ -53,7 +53,7 @@ def test_C33Ts_tcdr_passive_decadal():
 
 def test_C33Ts_icdr_combined_daily():
     file = os.path.join(os.path.join(os.path.dirname(__file__),
-                        'test-data', 'img', 'ICDR', '060_dailyImages', 'combined', '2017',
+                        'c3s_sm-test-data', 'img', 'ICDR', '060_dailyImages', 'combined', '2017',
                         'C3S-SOILMOISTURE-L3S-SSMV-COMBINED-DAILY-20170701000000-ICDR-v201706.0.0.nc'))
 
 
@@ -69,7 +69,7 @@ def test_C33Ts_icdr_combined_daily():
 def test_C33Ts_icdr_active_monthly():
 
     file = os.path.join(os.path.join(os.path.dirname(__file__),
-                        'test-data', 'img', 'ICDR', '061_monthlyImages', 'active',
+                        'c3s_sm-test-data', 'img', 'ICDR', '061_monthlyImages', 'active',
                         'C3S-SOILMOISTURE-L3S-SSMS-ACTIVE-MONTHLY-20170701000000-ICDR-v201706.0.0.nc'))
 
 
@@ -84,7 +84,7 @@ def test_C33Ts_icdr_active_monthly():
 
 def test_C33Ts_icdr_passive_decadal():
     file = os.path.join(os.path.join(os.path.dirname(__file__),
-                        'test-data', 'img', 'ICDR', '062_dekadalImages', 'passive',
+                        'c3s_sm-test-data', 'img', 'ICDR', '062_dekadalImages', 'passive',
                         'C3S-SOILMOISTURE-L3S-SSMV-PASSIVE-DEKADAL-20170701000000-ICDR-v201706.0.0.nc'))
 
 
