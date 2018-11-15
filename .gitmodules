@@ -1,4 +1,4 @@
 
 [submodule "tests/c3s_sm-test-data"]
 	path = tests/c3s_sm-test-data
-	url = git@github.com:TUW-GEO/c3s_sm-test-data.git
+	url = https://github.com/TUW-GEO/c3s_sm-test-data.git
