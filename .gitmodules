@@ -1,9 +1,4 @@
-[submodule "tests/test-data/c3s_sm"]
-	path = tests/test-data/c3s_sm
-	url = https://github.com/TUW-GEO/c3s_sm
-[submodule "tests/test-data/c3s_sm-test-data"]
-	path = tests/test-data/c3s_sm-test-data
+[submodule "tests/c3s_sm-test-data"]
+	path = tests/c3s_sm-test-data
 	url = https://github.com/TUW-GEO/c3s_sm-test-data
-[submodule "tests/test-data"]
-	path = tests/test-data
-	url = https://github.com/TUW-GEO/c3s_sm-test-data
+	branch = master
