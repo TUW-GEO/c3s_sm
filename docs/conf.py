@@ -40,8 +40,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'c3s_sm'
-copyright = u'2018, Wolfgang Preimesberger'
+project = 'c3s_sm'
+copyright = '2018, Wolfgang Preimesberger'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
