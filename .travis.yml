@@ -42,6 +42,7 @@ script:
   - python setup.py test
 after_success:
   # report coverage results to coveralls.io
+  - conda list
   - pip install coveralls
   - coveralls
 
