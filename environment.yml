@@ -7,10 +7,12 @@ dependencies:
   - numpy
   - pandas
   - scipy
+  - pytest==3.8.2
   - pip:
     - pynetcf
     - repurpose
     - pytesmo
     - pyresample
     - parse
+    - pytest-cov
     # - smecv_grid #### when public
