@@ -1,10 +1,9 @@
 # Add your requirements here like:
 # numpy
 # scipy>=0.9
-
 numpy
 pygeobase
-netcdf4
+netcdf4==1.2.2
 pyresample
 repurpose
 pynetcf
