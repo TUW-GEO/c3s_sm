@@ -5,7 +5,6 @@ import glob
 import tempfile
 import numpy as np
 import numpy.testing as nptest
-import shutil
 
 from c3s_sm.reshuffle import main, parse_filename
 from c3s_sm.interface import C3STs
@@ -37,14 +36,14 @@ def test_reshuffle_TCDR_daily():
     enddate = "1991-08-08"
     #parameters = ["sm", "sm_uncertainty", "dnflag", "flag", "freqbandID", "mode", "sensor", "t0"]
     parameters = ['--parameters', 'sm', 'sm_uncertainty']
-    land_points = 'False' # TODO: set this to True when the smecv_grid is public
+    land_points = 'True'
 
     ts_path = tempfile.mkdtemp()
     args = [inpath, ts_path, startdate, enddate]  + \
            parameters + ['--land_points', land_points]
     main(args)
 
-    assert len(glob.glob(os.path.join(ts_path, "*.nc"))) == 2593 # todo: set this to 1002 when using land points only
+    assert len(glob.glob(os.path.join(ts_path, "*.nc"))) == 1002
 
     ds = C3STs(ts_path, remove_nans=True)
     ts = ds.read(75.625, 14.625)
@@ -54,6 +53,8 @@ def test_reshuffle_TCDR_daily():
     ts_uncert_values_should = np.array([np.nan, np.nan, np.nan, np.nan],
                                        dtype=np.float32)
     nptest.assert_allclose(ts['sm_uncertainty'].values, ts_uncert_values_should,rtol=1e-5)
+
+    nptest.assert_almost_equal(ts['sm'].values, ds.read(602942)['sm'].values)
 
     #nptest.assert_allclose(ts['dnflag'].values, [1,0,2,1],rtol=1e-5)
     #nptest.assert_allclose(ts['flag'].values, [0,127,0,0],rtol=1e-5)

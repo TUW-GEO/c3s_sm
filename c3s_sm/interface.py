@@ -188,9 +188,9 @@ class C3SImg(ImageBase):
             for attr in variable.ncattrs():
                 param_metadata.update({str(attr): getattr(variable, attr)})
 
-            param_data = variable[0][:].filled().flatten()
+            param_data = np.flipud(variable[0][:].filled()).flatten()
 
-            param_img[str(param)] = param_data[np.sort(self.grid.activegpis)]
+            param_img[str(param)] = param_data[self.grid.activegpis]
             img_meta[param] = param_metadata
 
         # add global attributes
@@ -203,11 +203,12 @@ class C3SImg(ImageBase):
             return Image(self.grid.activearrlon, self.grid.activearrlat,
                          param_img, img_meta, timestamp)
         else:
+            yres, xres = self.grid.shape
             for key in param_img:
-                param_img[key] = param_img[key].reshape(720, 1440)
+                param_img[key] = param_img[key].reshape(xres, yres)
 
-            return Image(self.grid.activearrlon.reshape(720, 1440),
-                         self.grid.activearrlat.reshape(720, 1440),
+            return Image(self.grid.activearrlon.reshape(xres, yres),
+                         self.grid.activearrlat.reshape(xres, yres),
                          param_img,
                          img_meta,
                          timestamp)
