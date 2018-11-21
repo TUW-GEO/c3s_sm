@@ -2,5 +2,5 @@
 Developers
 ==========
 
-* tscanlon <tracy.scanlon@geo.tuwien.ac.at>
-* wpreimes <wolfgang.preimesberger@geo.tuwien.ac.at>
+* Tracy Scanlon <tracy.scanlon@geo.tuwien.ac.at>
+* Wolfgang Preimesberger <wolfgang.preimesberger@geo.tuwien.ac.at>

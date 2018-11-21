@@ -5,6 +5,8 @@
 
 .. include:: img2ts.rst
 
+.. include:: varnames.rst
+
 Contents
 ========
 
