@@ -112,7 +112,8 @@ class C3STs(GriddedNcOrthoMultiTs):
         if self.remove_nans:
             ts = ts.replace(-9999.0000, np.nan)
 
-        ts.index = ts.index.tz_localize('UTC')
+        if (hasattr(ts.index, 'tz') and (ts.index.tz is not None)):
+            ts.index = ts.index.tz_localize('UTC')
 
         return ts
 
