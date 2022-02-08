@@ -12,36 +12,42 @@ from netCDF4 import Dataset
 import pandas as pd
 import os
 
-from c3s_sm.interface import fntempl
+from interface import fntempl
+
+from smecv_grid.grid import SMECV_Grid_v052
 
 try:
     import xarray as xr
     import dask
     from dask.diagnostics import ProgressBar
+
     xr_supported = True
 except ImportError:
     xr_supported = False
+
 
 class C3S_DataCube:
     """
     Builds a xarray stack / data cube of C3S images
     """
+
     def __init__(self,
                  data_root,
                  parameters='sm',
                  clip_dates=None,
-                 chunks: Union[str, dict, tuple]='space',
+                 chunks: Union[str, dict, tuple] = 'space',
                  parallel=True,
-                 cell_size=5, # deg
-                 cell_chunksize_factor=5, # * cell_size
+                 cell_size=5,  # deg
+                 cell_chunksize_factor=5,  # * cell_size
                  log_to='std_out',
                  log_level=logging.WARNING,
+                 grid=None,
                  **kwargs):
         """
         Parameters
         ----------
         data_root : str or Path
-            Path where the C3S SM files are stored
+            where the C3S SM files are stored
         parameters : list or str, optional (default: 'sm')
             Parameter names to load from netcdf files
         clip_dates : tuple[str], optional (default: None)
@@ -92,7 +98,7 @@ class C3S_DataCube:
         else:
             start_date = end_date = None
 
-        files = self._filter_files(start_date, end_date) # todo : slow
+        files = self._filter_files(start_date, end_date)  # todo : slow
 
         drop_vars = []
         with Dataset(files[0]) as ds0:
@@ -100,17 +106,21 @@ class C3S_DataCube:
                 if var not in ds0.dimensions.keys() and var not in self.parameters:
                     drop_vars.append(var)
 
-            self.grid = self._gen_grid(ds0['lat'][:].filled(),
+            if grid is not None:
+                self.grid = grid
+                self.chunks = grid.to_cell_grid(cellsize=cell_size)
+
+            else:
+                self.grid = self._gen_grid(ds0['lat'][:].filled(),
                                            ds0['lon'][:].filled(),
                                            cell_size)
-            self.chunks = self._gen_grid(np.arange(-90, 90, cell_size)[::-1],
-                                         np.arange(-180, 180, cell_size),
-                                         cell_size * cell_chunksize_factor)
+                self.chunks = self._gen_grid(np.arange(-90, 90, cell_size)[::-1],
+                                             np.arange(-180, 180, cell_size),
+                                             cell_size * cell_chunksize_factor)
 
         with ProgressBar():
             self.ds = xr.open_mfdataset(files,
                                         data_vars='minimal',
-                                        concat_dim='time',
                                         parallel=parallel,
                                         engine='netcdf4',
                                         chunks=chunks,
@@ -120,7 +130,8 @@ class C3S_DataCube:
         self.active_chunk_id = None
         self.active_chunk_data = None
 
-    def _setup_logfile(self, target='std_out', level=logging.WARNING):
+    @staticmethod
+    def _setup_logfile(target='std_out', level=logging.WARNING):
         # set up logger
         logger = logging.getLogger('c3s')
         logger.setLevel(level)
@@ -128,18 +139,20 @@ class C3S_DataCube:
                       format='%(levelname)s - %(asctime)s: %(message)s')
         if not target.lower() == 'std_out':
             kwargs['filename'] = os.path.join(target,
-                      f"c3slog_{datetime.now().strftime('%Y%m%d%H%M%S')}.log")
+                                              f"c3slog_{datetime.now().strftime('%Y%m%d%H%M%S')}.log")
 
         logging.basicConfig(**kwargs)
 
-    def _gen_grid(self, lats:np.array, lons:np.array, cellsize:float) -> CellGrid:
+    @staticmethod
+    def _gen_grid(lats: np.array, lons: np.array, cellsize: float) -> CellGrid:
         lats, lons = np.meshgrid(lats, lons)
-        grid =  BasicGrid(lons.flatten(),
-                         np.flipud(lats.flatten()))\
-                .to_cell_grid(cellsize=cellsize)
+        grid = BasicGrid(lons.flatten(),
+                         np.flipud(lats.flatten())) \
+            .to_cell_grid(cellsize=cellsize)
         return grid
 
-    def _cell_to_slice(self, grid, cell) -> (slice, slice):
+    @staticmethod
+    def _cell_to_slice(grid, cell) -> (slice, slice):
         _, lons, lats = grid.grid_points_for_cell(cell)
 
         slice_lat = slice(max(lats), min(lats), None)
@@ -147,7 +160,7 @@ class C3S_DataCube:
 
         return slice_lat, slice_lon
 
-    def _filter_files(self, start_date:datetime=None, end_date:datetime=None) -> list:
+    def _filter_files(self, start_date: datetime = None, end_date: datetime = None) -> list:
         if start_date is None:
             start_date = datetime(1978, 1, 1)
         if end_date is None:
@@ -159,7 +172,7 @@ class C3S_DataCube:
         for fname in allfiles:
             fn_comps = parse(fntempl, os.path.basename(fname))
             dt = pd.to_datetime(fn_comps['datetime'])
-            if dt >= start_date and dt <= end_date:
+            if start_date <= dt <= end_date:
                 files.append(fname)
 
         return files
@@ -167,9 +180,8 @@ class C3S_DataCube:
     def _read_gp(self,
                  gpi: int) -> pd.DataFrame:
 
-        cell = self.grid.gpi2cell(gpi)
-        active_chunk_id = self.chunks.gpi2cell(cell)
-
+        active_chunk_id = self.chunks.gpi2cell(gpi)
+        # import pdb; pdb.set_trace()
         if active_chunk_id != self.active_chunk_id:
             slice_lat, slice_lon = self._cell_to_slice(self.chunks, active_chunk_id)
             logging.info('Extracting chunk')
@@ -217,24 +229,24 @@ class C3S_DataCube:
     def write_stack(self, out_file, **kwargs):
         vars = [v for v in list(self.ds.variables.keys()) if v not in self.ds.coords.keys()]
 
-        encoding = {v : {'zlib': True, 'complevel': 6} for v in vars}
+        encoding = {v: {'zlib': True, 'complevel': 6} for v in vars}
 
         with ProgressBar():
             self.ds.to_netcdf(out_file, encoding=encoding, **kwargs)
 
 
 if __name__ == '__main__':
-    ds = C3S_DataCube(r"C:\Temp\delete_me\c3s_sm\img",
-                      chunks='unlimited', clip_dates=('2000-01-01', '2020-12-31'),
+    ds = C3S_DataCube("/shares/pstradio/radar/Datapool/C3S/01_raw/v202012/ICDR/060_dailyImages/passive/",
+                      chunks='unlimited', clip_dates=('2020-01-01', '2021-12-31'),
                       log_to='std_out', log_level=logging.INFO)
 
-    #ds.write_stack(r"C:\Temp\c3s\stacks\combined_2000.nc")
-    #ts = ds.read_ts(45,15)
-    ts1 = ds.read_ts(792743)
-    ts2 = ds.read_ts(792744)
-
-    ts3 = ds.read_ts(356982)
-
-    for t in ['2000-05-01', '2010-05-02', '2019-05-03']:
-        img = ds.read_img(t)
-        print(img)
+    # ds.write_stack(r"C:\Temp\c3s\stacks\combined_2000.nc")
+    # ts = ds.read_ts(45,15)
+    # ts1 = ds.read_ts(792743)
+    # ts2 = ds.read_ts(792744)
+    #
+    # ts3 = ds.read_ts(356982)
+    #
+    # for t in ['2000-05-01', '2010-05-02', '2019-05-03']:
+    #     img = ds.read_img(t)
+    #     print(img)
