@@ -60,7 +60,7 @@ def parse_filename(data_dir):
     """
 
     for curr, subdirs, files in os.walk(data_dir):
-        for f in files:
+        for f in sorted(files):
             file_args = parse(fntempl, f)
             if file_args is None:
                 continue
