@@ -47,6 +47,7 @@ from parse import parse
 
 try:
     import xarray as xr
+
     xr_supported = True
 except ImportError:
     xr_supported = False
@@ -58,6 +59,7 @@ class C3SImg(ImageBase):
     """
     Class to read a single C3S image (for one time stamp)
     """
+
     def __init__(self,
                  filename,
                  parameters=None,
@@ -99,8 +101,8 @@ class C3SImg(ImageBase):
 
         self.parameters = parameters
 
-        self.subgrid = subgrid # subset to read
-        self.grid = SMECV_Grid_v052(None) # global input image
+        self.subgrid = subgrid  # subset to read
+        self.grid = SMECV_Grid_v052(None)  # global input image
 
         self.flatten = flatten
 
@@ -114,7 +116,7 @@ class C3SImg(ImageBase):
                 if p not in self.fillval:
                     self.fillval[p] = None
         else:
-            self.fillval ={p: fillval for p in self.parameters}
+            self.fillval = {p: fillval for p in self.parameters}
 
     def _read_flat_img(self) -> (dict, dict, dict, datetime):
         """
@@ -141,7 +143,7 @@ class C3SImg(ImageBase):
             for parameter in parameters:
                 metadata = {}
                 param = ds.variables[parameter]
-                data = param[:][0] # there is only 1 time stamp in the image
+                data = param[:][0]  # there is only 1 time stamp in the image
 
                 self.shape = (data.shape[0], data.shape[1])
 
@@ -255,10 +257,10 @@ class C3SImg(ImageBase):
                                self.subgrid.activearrlon.max()
 
             corners = self.grid.gpi2rowcol([
-                self.grid.find_nearest_gpi(min_lon, min_lat)[0], # llc
-                self.grid.find_nearest_gpi(max_lon, min_lat)[0], # lrc
-                self.grid.find_nearest_gpi(max_lon, max_lat)[0], # urc
-                ])
+                self.grid.find_nearest_gpi(min_lon, min_lat)[0],  # llc
+                self.grid.find_nearest_gpi(max_lon, min_lat)[0],  # lrc
+                self.grid.find_nearest_gpi(max_lon, max_lat)[0],  # urc
+            ])
 
             rows = slice(corners[0][0], corners[0][2] + 1)
             cols = slice(corners[1][0], corners[1][1] + 1)
@@ -277,6 +279,7 @@ class C3SImg(ImageBase):
 
     def flush(self, *args, **kwargs):
         pass
+
 
 class C3S_Nc_Img_Stack(MultiTemporalImageBase):
     """
@@ -299,9 +302,9 @@ class C3S_Nc_Img_Stack(MultiTemporalImageBase):
             Path to directory where C3S images are stored
         parameters : list or str,  optional (default: 'sm')
             Variables to read from the image files.
-        grid : pygeogrids.CellGrid, optional (default: SMECV_Grid_v052(None)
+        subgrid : pygeogrids.CellGrid, optional (default: SMECV_Grid_v052(None)
             Subset of the image to read
-        array_1D : bool, optional (default: False)
+        flatten : bool, optional (default: False)
             Flatten the read image to a 1D array instead of a 2D array
         solve_ambiguity : str, optional (default: 'latest')
             Method to solve ambiguous time stamps, e.g. if a reprocessing
@@ -311,7 +314,7 @@ class C3S_Nc_Img_Stack(MultiTemporalImageBase):
                     name, in case that multiple files are found.
                 - sort_first: uses the first file when sorted by file name
                     in case that multiple files are found.
-        filename_templ: str, optional
+        fntempl: str, optional
             Filename template to parse datetime from.
         subpath_templ : list or None, optional (default: None)
             List of subdirectory names to build file paths. e.g. ['%Y'] if files
@@ -339,14 +342,14 @@ class C3S_Nc_Img_Stack(MultiTemporalImageBase):
 
         super(C3S_Nc_Img_Stack, self).__init__(path=data_path,
                                                ioclass=C3SImg,
-                                               fname_templ=filename_templ ,
+                                               fname_templ=filename_templ,
                                                datetime_format="%Y%m%d%H%M%S",
                                                subpath_templ=subpath_templ,
                                                exact_templ=False,
                                                ioclass_kws=ioclass_kwargs)
 
-    def _build_filename(self, timestamp:datetime, custom_templ:str=None,
-                        str_param:dict=None):
+    def _build_filename(self, timestamp: datetime, custom_templ: str = None,
+                        str_param: dict = None):
         """
         This function uses _search_files to find the correct
         filename and checks if the search was unambiguous.
@@ -433,11 +436,11 @@ class C3S_Nc_Img_Stack(MultiTemporalImageBase):
         """
 
         if self.fname_args['temp'] == 'MONTHLY':
-            next = lambda date : date + relativedelta(months=1)
+            next = lambda date: date + relativedelta(months=1)
         elif self.fname_args['temp'] == 'DAILY':
-            next = lambda date : date + relativedelta(days=1)
+            next = lambda date: date + relativedelta(days=1)
         elif self.fname_args['temp'] == 'DEKADAL':
-            next = lambda date : date + relativedelta(days=10)
+            next = lambda date: date + relativedelta(days=10)
         else:
             raise NotImplementedError
 
@@ -467,6 +470,7 @@ class C3S_Nc_Img_Stack(MultiTemporalImageBase):
         except IOError:
             warnings.warn(f'Could not load image for {timestamp}.')
             raise IOError
+
 
 class C3STs(GriddedNcOrthoMultiTs):
     """
@@ -592,14 +596,14 @@ class C3STs(GriddedNcOrthoMultiTs):
     def write_ts(self, *args, **kwargs):
         pass
 
+
 if __name__ == '__main__':
     root = r"R:\Projects\C3S_312b\08_scratch\v202012_ts2img\060_daily_images\passive"
     old_template = r"C3S-SOILMOISTURE-L3S-SSMV-PASSIVE-{dt}000000-fv202012.nc"
     new_tempate = "C3S-SOILMOISTURE-L3S-SSMV-PASSIVE-DAILY-{dt}000000-TCDR-v202012.0.0.nc"
-    
+
     for year in os.listdir(root):
         for f in os.listdir(os.path.join(root, year)):
             dt = parse(old_template, f)['dt']
             os.rename(os.path.join(root, year, f),
                       os.path.join(root, year, new_tempate.format(dt=dt)))
-
