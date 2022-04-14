@@ -43,7 +43,7 @@ from pynetcf.time_series import GriddedNcContiguousRaggedTs
 class C3SreaderICDR_TCDR(GriddedNcContiguousRaggedTs):
     """
 
-    Allows reading of anomalies from ICDR with a pre-set TCDR baseline
+    Allows reading of anomalies from Interim CDR with a pre-set Thematic CDR baseline
 
     Parameters
     ----------
@@ -74,15 +74,15 @@ class C3SreaderICDR_TCDR(GriddedNcContiguousRaggedTs):
             stack_kwargs: dict = {},
             ts_kwargs: dict = {},
             mode='r',
-            reader_path=None,
+            out_path=None,
     ):
-        if reader_path is None:
-            reader_path = os.path.join(icdr_path, f"default_out")
+        if out_path is None:
+            out_path = os.path.join(icdr_path, f"default_out")
 
-        self.reader_path = reader_path
+        self.reader_path = out_path
 
         super(C3SreaderICDR_TCDR, self).__init__(
-            path=reader_path,
+            path=out_path,
             mode=mode,
             grid=grid,
         )
@@ -260,10 +260,11 @@ class AnomalyRepurpose(GriddedNcContiguousRaggedTs):
 
 # Functions to apply to ICDR and TCDR data
 # =========================================
+
 def calc_anomalies(
         icdr_ts: pd.Series,
         tcdr_ts: pd.Series,
-        baseline_start=(1988, 1, 1),
+        baseline_start=(1991, 1, 1),
         baseline_end=(2021, 1, 1),
 ) -> pd.Series:
     """Get anomalies from icdr and tcdr time series given a baseline"""
@@ -278,7 +279,7 @@ def calc_anomalies(
 def get_percentile(
         icdr_ts,
         tcdr_ts,
-        baseline_start=(1988, 1, 1),
+        baseline_start=(1991, 1, 1),
         baseline_end=(2021, 1, 1),
 ) -> pd.Series:
     """
@@ -308,6 +309,7 @@ def get_percentile(
 
 # Function to parallelize the class methods
 # =========================================
+
 def parallel_writing(AnomObj, funct, n_cores=8, **fun_kwargs):
     """Parallelize the writing of anomalies over the specified cores number"""
     runs = [
@@ -319,41 +321,31 @@ def parallel_writing(AnomObj, funct, n_cores=8, **fun_kwargs):
 
 
 if __name__ == '__main__':
-    # pass
-    subgrid = SMECV_Grid_v052().subgrid_from_cells([
-        1216, 1218, 1219, 1249, 1250, 1252, 1253, 1254, 1256, 1285, 1286,
-        1287, 1288, 1289, 1290, 1321, 1322, 1323, 1324, 1326, 1357, 1358,
-        1359, 1360, 1361, 1362, 1393, 1394, 1395, 1396, 1397, 1398, 1399,
-        1401, 1429, 1430, 1431, 1432, 1433, 1434, 1435, 1436, 1437, 1465,
-        1466, 1467, 1468, 1469, 1470, 1471, 1472, 1473, 1501, 1502, 1503,
-        1504, 1505, 1506, 1507, 1508, 1509, 1537, 1538, 1539, 1540, 1541,
-        1542, 1543, 1544, 1573, 1574, 1575, 1576, 1577, 1578, 1579
-    ])
 
+    # EXAMPLE USE
+    # ===========
+    subgrid = SMECV_Grid_v052()  # .subgrid_from_bbox(minlon, minlat, maxlon, maxlat)
+
+    # generation of anomalies time series
+    # -----------------------------------
     Anom = C3SreaderICDR_TCDR(
-        "/home/pstradio/shares/radar/Datapool/C3S/01_raw/v202012/ICDR/060_dailyImages/passive/",
-        "/home/pstradio/shares/radar/Datapool/C3S/02_processed/v202012/TCDR/063_images_to_ts/passive-daily/",
-        icdr_start="2021-04-01",
-        icdr_end="2021-09-01",
+        "path/to/the/ICDR",
+        "path/to/the/TCDR",
+        icdr_start="yyyy-MM-DD",
+        icdr_end="yyyy-MM-DD",
         grid=subgrid,
         mode='w',
-        reader_path="/home/pstradio/Projects_data/C3S/C3S_anomalies_PASSIVE_2021-04-01_2021-09-01/"
+        out_path="path/to/output"
     )
 
+    # give function to the parallel withing, in this case 'calc_anomalies'
     parallel_writing(Anom, calc_anomalies, n_cores=8)
 
-    Anom.close()
-    Anom.flush()
-
-    # Rep = AnomalyRepurpose(
-    #     path="/home/pstradio/Projects_data/C3S/C3S_percentiles_PASSIVE_2021-04-01_2021-09-01/",
-    #     grid=subgrid,
-    # )
-    #
-    # # Index the months are grouped to
-    # dt_index = pd.date_range(datetime(*(2021, 4, 1)), datetime(*(2021, 9, 1)), freq="M")
-    #
-    # Rep.repurpose(
-    #     "/home/pstradio/Projects_data/C3S/C3S_percentiles_PASSIVE_2021-04-01_2021-09-01/repurposed.nc",
-    #     **{"dt_index": dt_index}
-    # )
+    # generation of stack from the timeseries of anomalies (or other)
+    # ---------------------------------------------------------------
+    Rep = AnomalyRepurpose(
+        path="path/to/timeseries",
+        grid=subgrid,
+    )
+    # Index the months are grouped to
+    Rep.repurpose("path/to/output/nc")
