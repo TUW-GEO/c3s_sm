@@ -60,6 +60,7 @@ jobs:
       - name: Install package and test
         shell: bash -l {0}
         run: |
+          pip install -U setuptools_scm
           pip install .
           pytest --cache-clear
       - name: Upload Coverage
