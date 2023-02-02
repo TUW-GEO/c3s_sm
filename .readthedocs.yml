@@ -16,6 +16,3 @@ sphinx:
 conda:
   environment: docs/docs_env.yml
 
-submodules:
-  include:
-    - all
