@@ -4,4 +4,4 @@
 	ignore = dirty
 [submodule "docs/c3s_sm-tutorials"]
 	path = docs/c3s_sm-tutorials
-	url = git@github.com:TUW-GEO/c3s_sm-tutorials.git
+	url = https://github.com/TUW-GEO/c3s_sm-tutorials.git

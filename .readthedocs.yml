@@ -1,7 +1,9 @@
 version: 2
 
 submodules:
-  include: all
+  include:
+    - docs/c3s_sm-tutorials
+  recursive: true
 
 build:
   os: ubuntu-20.04
