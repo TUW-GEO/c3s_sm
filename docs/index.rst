@@ -15,6 +15,7 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+    Tutorials <c3s_sm-tutorials/index>
     License <license>
     Authors <authors>
     Changelog <changes>
