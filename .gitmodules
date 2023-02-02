@@ -2,3 +2,6 @@
 	path = tests/c3s_sm-test-data
 	url = https://www.geo.tuwien.ac.at/downloads/gittd/c3s_sm-test-data.git/
 	ignore = dirty
+[submodule "docs/c3s_sm-tutorials"]
+	path = docs/c3s_sm-tutorials
+	url = git@github.com:TUW-GEO/c3s_sm-tutorials.git

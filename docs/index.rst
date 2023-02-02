@@ -13,10 +13,11 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   License <license>
-   Authors <authors>
-   Changelog <changes>
-   Module Reference <api/modules>
+    Tutorials <c3s_sm-tutorials/index>
+    License <license>
+    Authors <authors>
+    Changelog <changes>
+    Module Reference <api/modules>
 
 
 Indices and tables
