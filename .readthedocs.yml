@@ -19,3 +19,4 @@ conda:
 submodules:
   include:
     - c3s_sm-tutorials
+  recursive: true
