@@ -9,7 +9,42 @@
 
 import os
 import sys
+import inspect
 import shutil
+
+import subprocess
+
+
+# Create kernel for notebooks
+on_rtd = "READTHEDOCS" in os.environ and os.environ["READTHEDOCS"]
+if on_rtd:
+    rtd_project = os.environ["READTHEDOCS_PROJECT"]
+    rtd_version = os.environ["READTHEDOCS_VERSION"]
+    interpreter = (
+        f"/home/docs/checkouts/readthedocs.org/user_builds/{rtd_project}/"
+        f"conda/{rtd_version}/bin/python"
+    )
+else:
+    interpreter = "python"
+
+print("Installing kernel")
+subprocess.run(
+    [
+        interpreter,
+        "-m",
+        "ipykernel",
+        "install",
+        "--user",
+        "--name",
+        "conda-env-c3s_sm-py",
+        "--display-name",
+        "Python [conda env:c3s_sm]"
+    ],
+    check=True,
+    capture_output=True,
+)
+print("Done")
+
 
 # -- Path setup --------------------------------------------------------------
 
@@ -88,7 +123,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "c3s_sm"
-copyright = "2022, TU Wien"
+copyright = "2023, TU Wien"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
