@@ -107,6 +107,7 @@ extensions = [
     "sphinx.ext.ifconfig",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
+    "nbsphinx",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -155,7 +156,7 @@ release = version
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".venv"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".venv",]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None
@@ -190,6 +191,7 @@ todo_emit_warnings = True
 # a list of builtin themes.
 html_theme = "sphinx_rtd_theme"
 
+html_extra_path = ['c3s_sm-tutorials']
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.

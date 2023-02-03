@@ -1,25 +1,15 @@
 
-.. include:: ../README.rst
-
-.. include:: reading.rst
-
-.. include:: img2ts.rst
-
-.. include:: varnames.rst
-
-.. include:: c3s_sm-tutorials/index.rst
-
-Contents
-========
-
 .. toctree::
-   :maxdepth: 2
+   :hidden:
+   :glob:
 
-    Tutorials <c3s_sm-tutorials/index>
-    License <license>
-    Authors <authors>
-    Changelog <changes>
-    Module Reference <api/modules>
+   README <readme>
+   License <license>
+   Authors <authors>
+   Changelog <changelog>
+   Module Reference <api/modules>
+
+.. include:: ../README.rst
 
 
 Indices and tables
