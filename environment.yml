@@ -11,7 +11,7 @@ dependencies:
   - pip:
     - pygeobase
     - pynetcf>=0.2.2
-    - repurpose
+    - repurpose>=0.9
     - parse
     - cadati
     - smecv_grid==0.3
