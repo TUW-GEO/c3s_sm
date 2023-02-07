@@ -36,7 +36,7 @@ Tutorials
 
 We provide (general) tutorials on using the C3S Soil Moisture data:
 
-- `Tutorial 1: DataAccess from CDS & Anomaly computation <html/T1_DataAccess_Anomalies.html>`_
+- `Tutorial 1: DataAccess from CDS & Anomaly computation <T1_DataAccess_Anomalies.html>`_
 
 These tutorials are designed to run on `mybinder.org <mybinder.org/>`_
 You can find the code for all examples in

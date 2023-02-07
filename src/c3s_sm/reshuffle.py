@@ -13,7 +13,7 @@ import pandas as pd
 from repurpose.img2ts import Img2Ts
 from c3s_sm.interface import C3S_Nc_Img_Stack, fntempl
 import c3s_sm.metadata as metadata
-from c3s_sm.metadata import C3S_daily_tsatt_nc, C3S_dekmon_tsatt_nc
+from c3s_sm.metadatac import C3S_daily_tsatt_nc, C3S_dekmon_tsatt_nc
 from smecv_grid.grid import SMECV_Grid_v052
 from parse import parse
 from netCDF4 import Dataset
