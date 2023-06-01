@@ -116,7 +116,7 @@ class C3S_SM_TS_Attrs(object):
         return self.mode_flag_meanings, self.mode_flag_values
 
 
-class C3S_daily_tsatt_nc(object):
+class C3S_daily_tsatt_nc:
 
     def __init__(self,
                  cdr_type:str,
@@ -278,13 +278,30 @@ class C3S_SM_TS_Attrs_v202012(C3S_SM_TS_Attrs):
 
         return self.sensor_flag_values, self.sensor_flag_meanings
 
-class C3S_SM_TS_Attrs_v202112(C3S_SM_TS_Attrs):
-    # gpm, fy3b added to sensors (no new freq band), based on cci v6
+class C3S_SM_TS_Attrs_v202212(C3S_SM_TS_Attrs):
+    # gpm, fy3b added to sensors (no new freq band), based on cci v7
     def __init__(self, sensor_type):
 
         version = type(self).__name__.split('_')[-1]
-        super(C3S_SM_TS_Attrs_v202112, self).__init__(sensor_type,
+        super(C3S_SM_TS_Attrs_v202212, self).__init__(sensor_type,
                                                       version)
+    def flag(self):
+        flag_dict = OrderedDict([
+            ('0', 'no_data_inconsistency_detected'),
+            ('Bit0', 'snow_coverage_or_temperature_below_zero'),
+            ('Bit1', 'dense_vegetation'),
+            ('Bit2', 'others_no_convergence_in_the_model_thus_no_valid_sm_estimates'),
+            ('Bit3', 'soil_moisture_value_exceeds_physical_boundary'),
+            ('Bit4', 'weight_of_measurement_below_threshold'),
+            ('Bit5', 'all_datasets_deemed_unreliable'),
+            ('Bit6', 'barren_ground_advisory_flag'),
+            ('Bit7', 'NaN'),
+        ])
+
+        self.flag_values = np.array(list(flag_dict.keys()))
+        self.flag_meanings = np.array(list(flag_dict.values()))
+
+        return self.flag_values, self.flag_meanings
 
     def sensor_flag(self):
         sensor_flag_dict = OrderedDict([
@@ -303,6 +320,9 @@ class C3S_SM_TS_Attrs_v202112(C3S_SM_TS_Attrs):
             ('Bit11', 'MODEL'),
             ('Bit12', 'GPM'),
             ('Bit13', 'FY3B'),
+            ('Bit14', 'FY3D'),
+            ('Bit15', 'ASCATC'),
+            ('Bit16', 'FY3C'),
         ])
 
         self.sensor_flag_values = np.array(list(sensor_flag_dict.keys()))
