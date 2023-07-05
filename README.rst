@@ -13,7 +13,7 @@ c3s_sm
     :target: https://badge.fury.io/py/c3s-sm
  
 .. image:: https://readthedocs.org/projects/c3s_sm/badge/?version=latest
-    :target: http://c3s_sm.readthedocs.io/en/latest/?badge=latest
+    :target: https://c3s-sm.readthedocs.io/en/latest/
 
 Reading and reshuffling of C3S soil moisture Written in Python.
 
