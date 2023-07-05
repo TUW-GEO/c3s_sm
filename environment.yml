@@ -18,6 +18,3 @@ dependencies:
     - more_itertools
     - pytest
     - pytest-cov
-    - sphinx
-    - nbsphinx
-    - sphinx_rtd_theme

@@ -7,5 +7,7 @@ dependencies:
 - python=3.8
 - ipykernel
 - nbsphinx
+- pip
+  - sphinx<7.0.0
 # Note: RTD will add packages it needs automatically such as sphinx, sphinx_rtd_theme
 
