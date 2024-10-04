@@ -59,8 +59,7 @@ jobs:
           # On macos pykdtree was built with OpenMP (C-level parallelization library) support
           if [ ${{ matrix.os }} == "macos-latest" ] 
           then
-            brew install llvm
-            brew install libomp
+            pip install --no-binary pykdtree --force-install pykdtree
           fi
           pip install -e .[testing]
       - name: Run all tests
