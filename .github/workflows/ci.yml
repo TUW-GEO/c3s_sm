@@ -56,6 +56,10 @@ jobs:
       - name: Install dependencies and package
         shell: bash -l {0}
         run: |
+          # On macos pykdtree was built with OpenMP (C-level parallelization library) support
+          if [ ${{ matrix.os }} == "macos-latest" ] 
+          then
+            brew install omp
           pip install -e .[testing]
       - name: Run all tests
         shell: bash -l {0}
