@@ -59,7 +59,7 @@ jobs:
           # On macos pykdtree was built with OpenMP (C-level parallelization library) support
           if [ ${{ matrix.os }} == "macos-latest" ] 
           then
-            pip install --no-binary pykdtree --force-install pykdtree
+            pip install --no-binary pykdtree --force-reinstall pykdtree
           fi
           pip install -e .[testing]
       - name: Run all tests
