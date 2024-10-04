@@ -29,6 +29,13 @@ The c3s_sm package and all required dependencies can be installed via
 
     pip install c3s_sm
 
+On macOS if you get ``ImportError: Pykdtree failed to import its C extension``, then it
+might be necessary to install the pykdtree package from conda-forge
+
+.. code-block:: shell
+
+    conda install -c conda-forge pykdtree
+
 Tutorials
 =========
 
