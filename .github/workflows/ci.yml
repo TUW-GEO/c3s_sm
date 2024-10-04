@@ -59,7 +59,7 @@ jobs:
           # On macos pykdtree was built with OpenMP (C-level parallelization library) support
           if [ ${{ matrix.os }} == "macos-latest" ] 
           then
-            brew install omp
+            conda install pykdtree
           fi
           pip install -e .[testing]
       - name: Run all tests
