@@ -244,7 +244,8 @@ def img2ts(img_path,
             'sensor_type': prod_args['product'].lower(),
             'cdr_type': prod_args['record'],
             'freq': freq,
-            'cls': getattr(metadata, f"C3S_SM_TS_Attrs_{prod_args['version']}")
+            'cls': getattr(metadata, f"C3S_SM_TS_Attrs"),
+            'version': prod_args['version']
         }
 
         props['sensor_type'] = kwargs['sensor_type']

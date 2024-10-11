@@ -43,3 +43,4 @@ cover/*
 MANIFEST
 
 .local
+docker_build.log

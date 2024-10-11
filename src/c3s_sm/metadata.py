@@ -44,9 +44,8 @@ class C3S_SM_TS_Attrs(object):
 
     def dn_flag(self):
         dn_flag_dict = OrderedDict([
-            ('0', 'NaN'),
-            ('Bit1', "day"),
-            ('Bit2', 'night'),
+            (1, "day"),
+            (2, 'night'),
         ])
         self.dn_flag_values = np.array(list(dn_flag_dict.keys()))
         self.dn_flag_meanings = np.array(list(dn_flag_dict.values()))
@@ -55,15 +54,15 @@ class C3S_SM_TS_Attrs(object):
 
     def flag(self):
         flag_dict = OrderedDict([
-            ('0', 'no_data_inconsistency_detected'),
-            ('Bit0', 'snow_coverage_or_temperature_below_zero'),
-            ('Bit1', 'dense_vegetation'),
-            ('Bit2',
+            (1, 'snow_coverage_or_temperature_below_zero'),
+            (2, 'dense_vegetation'),
+            (3,
              'others_no_convergence_in_the_model_thus_no_valid_sm_estimates'),
-            ('Bit3', 'soil_moisture_value_exceeds_physical_boundary'),
-            ('Bit4', 'weight_of_measurement_below_threshold'),
-            ('Bit5', 'all_datasets_deemed_unreliable'),
-            ('Bit6', 'NaN'),
+            (4, 'soil_moisture_value_exceeds_physical_boundary'),
+            (5, 'weight_of_measurement_below_threshold'),
+            (6, 'all_datasets_deemed_unreliable'),
+            (7, 'barren_ground_advisory_flag'),
+            (8, 'not_used'),
         ])
 
         self.flag_values = np.array(list(flag_dict.keys()))
@@ -73,15 +72,15 @@ class C3S_SM_TS_Attrs(object):
 
     def freqbandID_flag(self):
         freqbandID_flag_dict = OrderedDict([
-            ('0', 'NaN'),
-            ('Bit0', 'L14'),
-            ('Bit1', 'C53'),
-            ('Bit2', 'C66'),
-            ('Bit3', 'C68'),
-            ('Bit4', 'C69'),
-            ('Bit5', 'C73'),
-            ('Bit6', 'X107'),
-            ('Bit7', 'K194'),
+            (1, 'L14'),
+            (2, 'C53'),
+            (3, 'C66'),
+            (4, 'C68'),
+            (5, 'C69'),
+            (6, 'C73'),
+            (7, 'X107'),
+            (8, 'K194'),
+            (9, 'MODEL'),
         ])
 
         self.freqbandID_flag_values = np.array(
@@ -93,17 +92,23 @@ class C3S_SM_TS_Attrs(object):
 
     def sensor_flag(self):
         sensor_flag_dict = OrderedDict([
-            ('0', 'NaN'),
-            ('Bit0', 'SMMR'),
-            ('Bit1', 'SSMI'),
-            ('Bit2', 'TMI'),
-            ('Bit3', 'AMSRE'),
-            ('Bit4', 'WindSat'),
-            ('Bit5', 'AMSR2'),
-            ('Bit6', 'SMOS'),
-            ('Bit7', 'AMIWS'),
-            ('Bit8', 'ASCATA'),
-            ('Bit9', 'ASCATB'),
+            (1, 'SMMR'),
+            (2, 'SSMI'),
+            (3, 'TMI'),
+            (4, 'AMSRE'),
+            (5, 'WindSat'),
+            (6, 'AMSR2'),
+            (7, 'SMOS'),
+            (8, 'AMIWS'),
+            (9, 'ASCATA'),
+            (10, 'ASCATB'),
+            (11, 'SMAP'),
+            (12, 'MODEL'),
+            (13, 'GPM'),
+            (14, 'FY3B'),
+            (15, 'FY3D'),
+            (16, 'ASCATC'),
+            (17, 'FY3C'),
         ])
 
         self.sensor_flag_values = np.array(list(sensor_flag_dict.keys()))
@@ -113,9 +118,8 @@ class C3S_SM_TS_Attrs(object):
 
     def mode_flag(self):
         mode_flag_dict = OrderedDict([
-            ('0', 'NaN'),
-            ('Bit0', 'ascending'),
-            ('Bit1', 'descending'),
+            (1, 'ascending'),
+            (2, 'descending'),
         ])
         self.mode_flag_values = np.array(list(mode_flag_dict.keys()))
         self.mode_flag_meanings = np.array(list(mode_flag_dict.values()))
@@ -123,11 +127,11 @@ class C3S_SM_TS_Attrs(object):
         return self.mode_flag_meanings, self.mode_flag_values
 
 
-class C3S_daily_tsatt_nc:
+class C3S_daily_tsatt_nc(C3S_SM_TS_Attrs):
 
-    def __init__(self, cdr_type: str, sensor_type: str, cls):
+    def __init__(self, cdr_type: str, sensor_type: str, version: str, cls):
 
-        self.general_attrs = cls(sensor_type=sensor_type)
+        self.general_attrs = cls(sensor_type=sensor_type, version=version)
 
         self.version = self.general_attrs.version
         sensor_type = self.general_attrs.sensor_type
@@ -208,9 +212,10 @@ class C3S_dekmon_tsatt_nc(object):
     tcdr and icdr timeseries files.
     """
 
-    def __init__(self, freq: str, cdr_type: str, sensor_type: str, cls):
+    def __init__(self, freq: str, cdr_type: str, sensor_type: str, version: str,
+                 cls):
 
-        self.general_attrs = cls(sensor_type=sensor_type)
+        self.general_attrs = cls(sensor_type=sensor_type, version=version)
 
         self.version = self.general_attrs.version
         sensor_type = self.general_attrs.sensor_type
@@ -262,125 +267,3 @@ class C3S_dekmon_tsatt_nc(object):
             'version': str(_vers),
             'resolution': '0.25 degree'
         }
-
-
-class C3S_SM_TS_Attrs_v201706(C3S_SM_TS_Attrs):
-    # Example for a version specific attribute class, last part defines version
-    def __init__(self, sensor_type):
-
-        version = type(self).__name__.split('_')[-1]
-        super(C3S_SM_TS_Attrs_v201706, self).__init__(sensor_type, version)
-
-
-class C3S_SM_TS_Attrs_v201801(C3S_SM_TS_Attrs):
-    # Example for a version specific attribute class, last part defines version
-    def __init__(self, sensor_type):
-
-        version = type(self).__name__.split('_')[-1]
-        super(C3S_SM_TS_Attrs_v201801, self).__init__(sensor_type, version)
-
-
-class C3S_SM_TS_Attrs_v201812(C3S_SM_TS_Attrs):
-    # Example for a version specific attribute class, last part defines version
-    def __init__(self, sensor_type):
-
-        version = type(self).__name__.split('_')[-1]
-        super(C3S_SM_TS_Attrs_v201812, self).__init__(sensor_type, version)
-
-
-class C3S_SM_TS_Attrs_v201912(C3S_SM_TS_Attrs):
-    # Example for a version specific attribute class, last part defines version
-    def __init__(self, sensor_type):
-
-        version = type(self).__name__.split('_')[-1]
-        super(C3S_SM_TS_Attrs_v201912, self).__init__(sensor_type, version)
-
-
-class C3S_SM_TS_Attrs_v202012(C3S_SM_TS_Attrs):
-    # smap added to sensors (no new freq band), based on cci v5
-    def __init__(self, sensor_type):
-
-        version = type(self).__name__.split('_')[-1]
-        super(C3S_SM_TS_Attrs_v202012, self).__init__(sensor_type, version)
-
-    def sensor_flag(self):
-        sensor_flag_dict = OrderedDict([
-            ('0', 'NaN'),
-            ('Bit0', 'SMMR'),
-            ('Bit1', 'SSMI'),
-            ('Bit2', 'TMI'),
-            ('Bit3', 'AMSRE'),
-            ('Bit4', 'WindSat'),
-            ('Bit5', 'AMSR2'),
-            ('Bit6', 'SMOS'),
-            ('Bit7', 'AMIWS'),
-            ('Bit8', 'ASCATA'),
-            ('Bit9', 'ASCATB'),
-            ('Bit10', 'SMAP'),
-        ])
-
-        self.sensor_flag_values = np.array(list(sensor_flag_dict.keys()))
-        self.sensor_flag_meanings = np.array(list(sensor_flag_dict.values()))
-
-        return self.sensor_flag_values, self.sensor_flag_meanings
-
-
-class C3S_SM_TS_Attrs_v202212(C3S_SM_TS_Attrs):
-    # gpm, fy3b added to sensors (no new freq band), based on cci v7
-    def __init__(self, sensor_type):
-
-        version = type(self).__name__.split('_')[-1]
-        super(C3S_SM_TS_Attrs_v202212, self).__init__(sensor_type, version)
-
-    def flag(self):
-        flag_dict = OrderedDict([
-            ('0', 'no_data_inconsistency_detected'),
-            ('Bit0', 'snow_coverage_or_temperature_below_zero'),
-            ('Bit1', 'dense_vegetation'),
-            ('Bit2',
-             'others_no_convergence_in_the_model_thus_no_valid_sm_estimates'),
-            ('Bit3', 'soil_moisture_value_exceeds_physical_boundary'),
-            ('Bit4', 'weight_of_measurement_below_threshold'),
-            ('Bit5', 'all_datasets_deemed_unreliable'),
-            ('Bit6', 'barren_ground_advisory_flag'),
-            ('Bit7', 'NaN'),
-        ])
-
-        self.flag_values = np.array(list(flag_dict.keys()))
-        self.flag_meanings = np.array(list(flag_dict.values()))
-
-        return self.flag_values, self.flag_meanings
-
-    def sensor_flag(self):
-        sensor_flag_dict = OrderedDict([
-            ('0', 'NaN'),
-            ('Bit0', 'SMMR'),
-            ('Bit1', 'SSMI'),
-            ('Bit2', 'TMI'),
-            ('Bit3', 'AMSRE'),
-            ('Bit4', 'WindSat'),
-            ('Bit5', 'AMSR2'),
-            ('Bit6', 'SMOS'),
-            ('Bit7', 'AMIWS'),
-            ('Bit8', 'ASCATA'),
-            ('Bit9', 'ASCATB'),
-            ('Bit10', 'SMAP'),
-            ('Bit11', 'MODEL'),
-            ('Bit12', 'GPM'),
-            ('Bit13', 'FY3B'),
-            ('Bit14', 'FY3D'),
-            ('Bit15', 'ASCATC'),
-            ('Bit16', 'FY3C'),
-        ])
-
-        self.sensor_flag_values = np.array(list(sensor_flag_dict.keys()))
-        self.sensor_flag_meanings = np.array(list(sensor_flag_dict.values()))
-
-        return self.sensor_flag_values, self.sensor_flag_meanings
-
-
-class C3S_SM_TS_Attrs_v202312(C3S_SM_TS_Attrs):
-
-    def __init__(self, sensor_type):
-        version = type(self).__name__.split('_')[-1]
-        super(C3S_SM_TS_Attrs_v202312, self).__init__(sensor_type, version)
