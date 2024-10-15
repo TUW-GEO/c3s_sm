@@ -54,6 +54,23 @@ At the moment this package supports C3S soil moisture data
 in netCDF format (reading and time series creation)
 with a spatial sampling of 0.25 degrees.
 
+Build Docker image
+==================
+- Check out the repo at the branch/tag/commit you want build
+- Make sure you have docker installed and run the command (replace the tag `latest`
+with something more meaningful, e.g. a matching version number)
+
+.. code::
+
+    docker build -t c3s_sm:latest . 2>&1 | tee docker_build.log
+
+This will execute the commands from the Dockerfile. I.e. install a new environment
+with the checked out version of the c3s_sm package.
+
+To build and publish the image online, we have a GitHub Actions workflow in
+``.github/workflows/docker.yml``
+
+
 Contribute
 ==========
 
@@ -73,4 +90,3 @@ If you want to contribute please follow these steps:
 - Add your feature
 - Please include tests for your contributions in one of the test directories.
 - submit a pull request to our master branch
-
