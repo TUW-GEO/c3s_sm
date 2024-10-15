@@ -7,9 +7,17 @@ Unreleased Changes
 
 -
 
+Version 0.3.0
+=============
+- Added CLI module
+- Added a program for regular dataset updates (pulling new
+  images and time series creation)
+- Version specific metadata was dropped
+- Dockerfile added
+- Tutorials submodule was updated
+
 Version 0.2.0
 =============
-
 - Support C3S v202212
 - Add tutorials submodule to docs
 - Allow reading and reshuffling spatial subsets (bbox)
@@ -20,19 +28,16 @@ Version 0.2.0
 
 Version 0.1.2
 =============
-
 - Update pyscaffold structure
 - Add automatic pypi deploy
 - Add option to remove time zone info from time series
 
 Version 0.1.1
 =============
-
 - Contains extended time series reader
 
 Version 0.1
 ===========
-
 - Add smecv grid support
 - Add reader from images and image stacks
 - Add reshuffle module
