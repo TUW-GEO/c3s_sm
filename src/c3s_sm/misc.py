@@ -100,7 +100,7 @@ def read_summary_yml(path: str) -> dict:
     """
     Read image summary and return fields as dict.
     """
-    path = os.path.join(path, '000_overview.yml')
+    path = os.path.join(path, 'overview.yml')
 
     with open(path, 'r') as stream:
         props = yaml.safe_load(stream)
@@ -194,7 +194,7 @@ def update_image_summary_file(data_path: str,
     props['period_to'] = str(pd.to_datetime(last_image_date).date())
 
     if out_file is None:
-        out_file = os.path.join(data_path, f"000_overview.yml")
+        out_file = os.path.join(data_path, f"overview.yml")
 
     with open(out_file, 'w') as f:
         yaml.dump(props, f, default_flow_style=False)
@@ -210,7 +210,7 @@ def update_ts_summary_file(data_path, props=None, collect_cov=False, **kwargs):
     ----------
     data_path: str
         Path where the time series files are stored and where the file
-        000_overview.yml will be stored.
+        overview.yml will be stored.
     props: dict, optional
         Additional information to write down
     collect_cov: bool, optional (False)
@@ -241,7 +241,7 @@ def update_ts_summary_file(data_path, props=None, collect_cov=False, **kwargs):
                 N=len(cells),
                 cells=sorted(cells))
 
-    out_file = os.path.join(data_path, f"000_overview.yml")
+    out_file = os.path.join(data_path, f"overview.yml")
 
     # keep old props (except datetime)
     for k, v in old_props.items():
