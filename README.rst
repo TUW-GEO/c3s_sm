@@ -58,7 +58,7 @@ Build Docker image
 ==================
 - Check out the repo at the branch/tag/commit you want build
 - Make sure you have docker installed and run the command (replace the tag `latest`
-with something more meaningful, e.g. a matching version number)
+  with something more meaningful, e.g. a matching version number)
 
 .. code::
 
