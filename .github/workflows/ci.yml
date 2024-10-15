@@ -13,6 +13,10 @@ on:
   schedule:
     - cron: '0 0 * * *'  # nightly build
 
+env:  # Required to upload docker image
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   build:
     name: py${{ matrix.python-version }}@${{ matrix.os }}
