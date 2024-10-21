@@ -88,12 +88,8 @@ def cli_download(path,
     # The docstring above is slightly different to the normal python one to
     # display it properly on the command line.
 
-    url = os.environ.get('CDSAPI_URL', cds_api_url)
-    os.environ['CDSAPI_URL'] = url
-
     if cds_token is not None:
         os.environ["CDSAPI_KEY"] = cds_token
-
     check_api_read()
 
     startdate = pd.to_datetime(startdate)
@@ -152,13 +148,8 @@ def cli_update_img(path, fntempl, cds_token=None):
     # The docstring above is slightly different to the normal python one to
     # display it properly on the command line.
 
-    # if not set, use URL from const
-    if 'CDSAPI_URL' not in os.environ:
-        os.environ['CDSAPI_URL'] = cds_api_url
-
     if cds_token is not None:
         os.environ["CDSAPI_KEY"] = cds_token
-
     check_api_read()
 
     props = img_infer_file_props(path, fntempl=fntempl, start_from='last')

@@ -13,6 +13,9 @@ dotrc = os.environ.get('CDSAPI_RC', os.path.join(Path.home(), '.cdsapirc'))
 def check_api_read() -> bool:
     if not os.path.isfile(dotrc):
         key = os.environ.get('CDSAPI_KEY')
+        if "CDSAPI_URL" not in os.environ:
+            os.environ['CDSAPI_URL'] = cds_api_url
+
         if key is None:
             raise ValueError(
                 'Neither CDSAPI_KEY variable nor .cdsapirc file found, '
@@ -23,7 +26,8 @@ def check_api_read() -> bool:
         else:
             api_ready = True
     else:
-        os.environ.pop("CDSAPI_URL")   # Use URL from file
+        if "CDSAPI_URL" in os.environ:
+            os.environ.pop("CDSAPI_URL")   # Use URL from file
         api_ready = True
 
     return api_ready

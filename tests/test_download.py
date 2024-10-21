@@ -32,8 +32,8 @@ def test_download_dry_run():
         assert queries[1]['icdr']['request']['day'] == ['01', '02', '03', '04', '05']
         assert queries[1]['icdr']['request']['version'] == 'v202212'
 
-
 @pytest.mark.skipif(("CDS_APIKEY" not in os.environ) and not os.path.exists(dotrc),
+                    # To run this test on Github, the CDS_APIKEY env secret must be set (also in ci.yml!)
                     reason="No environment variable CDS_APIKEY or "
                            ".cdsapirc file found.")
 def test_download_with_token():
@@ -43,8 +43,10 @@ def test_download_with_token():
                + ['-e', '2022-07-31'] \
                + ['--product', 'combined'] \
                + ['--freq', 'monthly'] \
-               + ['--version', 'v202212'] \
-               + ['--cds_token', os.environ['CDS_APIKEY']]
+               + ['--version', 'v202212']
+
+        if not os.path.exists(dotrc):
+           args += ['--cds_token', os.environ['CDS_APIKEY']]
 
         subprocess.call(['c3s_sm', 'download', *args])
         files = os.listdir(os.path.join(outpath, '2022'))
