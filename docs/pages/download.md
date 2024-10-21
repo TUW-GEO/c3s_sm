@@ -16,13 +16,13 @@ since the last update (e.g. you can set up a cron job to keep your records
 up-to-date)
 
 Before any of the 2 scripts can be used, you must provide your CDS API key. 
-Follow this guide: https://cds.climate.copernicus.eu/api-how-to#install-the-cds-api-key
+Follow this guide: https://cds.climate.copernicus.eu/how-to-api
 
 Make sure that 
 - On Linux: You have your credentials stored in `$HOME/.cdsapirc`
-- On Windows: Your have your credentials stored in `%USERPROFILE%\.cdsapirc`,
+- On Windows: You have your credentials stored in `%USERPROFILE%\.cdsapirc`,
 %USERPROFILE% is usually located at C:\Users\Username folder
-- On MacOS: Your have your credentials stored in `~/.cdsapirc`
+- On MacOS: Your have your credentials stored in `/Users/<USERNAME>/.cdsapirc`
 
 Alternatively you can pass your UID and API Key (that you get from your CDS
 profile page) directly with the download command (but the .cdsapirc option
@@ -40,7 +40,7 @@ Example command to download the daily passive product v202212 in the period from
 E.g.
 ```console
 c3s_sm download /target/path -s 2019-05-01 -e 2019-05-10 --product passive 
---freq daily -v v202212 --cds_token XXXX:xxxx-xxxxxx-xxxx-xxxx
+--freq daily -v v202212 --cds_token xxxxxxx-xxxx-xxxx-xxxxxxxxxx
 ```
 
 `--product` can be one of `active`, `combined` or `passive`. `--freq` is either
@@ -49,6 +49,8 @@ page.
 
 This will create a subfolder for each year in the target directory and store 
 downloaded images there.
+
+Note: You don't have to provide your token if you have set up a .cdsapirc file.
 
 ```
 /target/path/
@@ -69,9 +71,11 @@ archive.
 
 E.g.
 ```console
-c3s_sm update_img /target/path --cds_token XXXX:xxxx-xxxxxx-xxxx-xxxx
+c3s_sm update_img /target/path --cds_token xxxxxxx-xxxx-xxxx-xxxxxxxxxx
 ```
 
 requires that some (previously downloaded) files are available in /target/path.
 It will then check for matching new data online and download those.
+
+Note: You don't have to provide your token if you have set up a .cdsapirc file.
 

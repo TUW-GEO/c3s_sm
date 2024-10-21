@@ -7,6 +7,10 @@ Unreleased Changes
 
 -
 
+Version 0.3.1
+=============
+- Fixing CDS API access (new token and API url)
+
 Version 0.3.0
 =============
 - Added CLI module

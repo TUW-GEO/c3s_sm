@@ -5,6 +5,7 @@ import pytest
 import subprocess
 from c3s_sm.download import download_and_extract
 from c3s_sm.misc import read_summary_yml
+from c3s_sm.const import dotrc
 
 def test_download_dry_run():
     with TemporaryDirectory() as outpath:
@@ -32,8 +33,9 @@ def test_download_dry_run():
         assert queries[1]['icdr']['request']['version'] == 'v202212'
 
 
-@pytest.mark.skipif("CDS_APIKEY" not in os.environ,
-                    reason="No environment variable CDS_APIKEY key found")
+@pytest.mark.skipif(("CDS_APIKEY" not in os.environ) and not os.path.exists(dotrc),
+                    reason="No environment variable CDS_APIKEY or "
+                           ".cdsapirc file found.")
 def test_download_with_token():
     with TemporaryDirectory() as outpath:
         args = [outpath] \

@@ -36,6 +36,14 @@ might be necessary to install the pykdtree package from conda-forge
 
     conda install -c conda-forge pykdtree
 
+API Key
+-------
+In order to download C3S soil moisture data from CDS, this package uses the
+CDS API (https://pypi.org/project/cdsapi/). You can
+either pass your credentials directly on the command line (which might be
+unsafe) or set up a `.cdsapirc` file in your home directory (recommended).
+Please see the description at https://cds.climate.copernicus.eu/how-to-api.
+
 Tutorials
 =========
 
