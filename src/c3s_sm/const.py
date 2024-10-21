@@ -3,7 +3,8 @@ import os
 from pathlib import Path
 from datetime import datetime
 
-cds_api_url = "https://cds.climate.copernicus.eu/api/v2"
+# This can be overridden in the .cdsapirc file
+cds_api_url = "https://cds.climate.copernicus.eu/api"
 
 # CDSAPI_RC variable must be set or we use home dir
 dotrc = os.environ.get('CDSAPI_RC', os.path.join(Path.home(), '.cdsapirc'))
@@ -11,25 +12,24 @@ dotrc = os.environ.get('CDSAPI_RC', os.path.join(Path.home(), '.cdsapirc'))
 
 def check_api_read() -> bool:
     if not os.path.isfile(dotrc):
-        url = os.environ.get('CDSAPI_URL')
         key = os.environ.get('CDSAPI_KEY')
-        if url is None or key is None:
-            ValueError('CDS API KEY or .cdsapirc file not found, '
-                       'download will not work! '
-                       'Please create a .cdsapirc file with your credentials'
-                       'or pass your uid/key to the command line tool '
-                       'See: '
-                       'https://cds.climate.copernicus.eu/api-how-to')
-            api_ready = False
-        elif ":" not in key:
+        if "CDSAPI_URL" not in os.environ:
+            os.environ['CDSAPI_URL'] = cds_api_url
+
+        if key is None:
             raise ValueError(
-                'Your CDS token is not valid. It must be in the format '
-                '<UID>:<APIKEY>, both of which are found on your CDS'
-                'profile page.')
+                'Neither CDSAPI_KEY variable nor .cdsapirc file found, '
+                'download will not work! '
+                'Please create a .cdsapirc file with your API key. '
+                'See: https://cds.climate.copernicus.eu/how-to-api'
+            )
         else:
             api_ready = True
     else:
+        if "CDSAPI_URL" in os.environ:
+            os.environ.pop("CDSAPI_URL")   # Use URL from file
         api_ready = True
+
     return api_ready
 
 

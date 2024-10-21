@@ -61,9 +61,9 @@ from c3s_sm.const import fntempl as _default_template, check_api_read, cds_api_u
     "--cds_token",
     type=click.STRING,
     default=None,
-    help="To identify with the CDS, required if no .cdsapi file exists. "
-    "Consists of your UID and API Key <UID:APIKEY>. Both can be "
-    "found on your CDS User profile page.")
+    help="To identify with the CDS. Required if no .cdsapirc file exists in "
+         "the home directory (see documentation). You can find your token/key "
+         "on your CDS user profile page.")
 def cli_download(path,
                  startdate,
                  enddate,
@@ -75,7 +75,7 @@ def cli_download(path,
     """
     Download C3S SM data within a chosen period. NOTE: Before using this
     program, create a CDS account and set up a `.cdsapirc` file as described
-    here: https://cds.climate.copernicus.eu/api-how-to
+    here: https://cds.climate.copernicus.eu/how-to-api
 
     \b
     Required Parameters
@@ -83,18 +83,13 @@ def cli_download(path,
     PATH: string (required)
         Path where the downloaded C3S SM images are stored.
         Make sure to set up the CDS API for your account as describe in
-        https://cds.climate.copernicus.eu/api-how-to
+        https://cds.climate.copernicus.eu/how-to-api
     """
     # The docstring above is slightly different to the normal python one to
     # display it properly on the command line.
 
-    url = os.environ.get('CDSAPI_URL',
-                         "https://cds.climate.copernicus.eu/api/v2")
-    os.environ['CDSAPI_URL'] = url
-
     if cds_token is not None:
         os.environ["CDSAPI_KEY"] = cds_token
-
     check_api_read()
 
     startdate = pd.to_datetime(startdate)
@@ -130,10 +125,9 @@ def cli_download(path,
     "--cds_token",
     type=click.STRING,
     default=None,
-    help="To identify with the CDS. Required if no .cdsapi file exists. "
-    "In the home directory (see documentation)."
-    "Consists of your UID and API Key <UID:APIKEY>. Both can be "
-    "found under your CDS User profile page.")
+    help="To identify with the CDS. Required if no .cdsapirc file exists in "
+         "the home directory (see documentation). You can find your token/key "
+         "on your CDS user profile page.")
 def cli_update_img(path, fntempl, cds_token=None):
     """
     Extend a locally existing C3S SM record by downloading new files that
@@ -149,18 +143,13 @@ def cli_update_img(path, fntempl, cds_token=None):
     PATH: string
         Path where previously downloaded C3S SM images are stored.
         Make sure to set up the CDS API for your account as describe in
-        https://cds.climate.copernicus.eu/api-how-to
+        https://cds.climate.copernicus.eu/how-to-api
     """
     # The docstring above is slightly different to the normal python one to
     # display it properly on the command line.
 
-    # if not set, use URL from const
-    if 'CDSAPI_URL' not in os.environ:
-        os.environ['CDSAPI_URL'] = cds_api_url
-
     if cds_token is not None:
         os.environ["CDSAPI_KEY"] = cds_token
-
     check_api_read()
 
     props = img_infer_file_props(path, fntempl=fntempl, start_from='last')
@@ -296,7 +285,7 @@ def cli_reshuffle(img_path, ts_path, startdate, enddate, parameters, land,
     if startdate is None:
         startdate = get_first_image_date(img_path, fntempl)
     if enddate is None:
-        enddate = get_last_image_date(ts_path, fntempl)
+        enddate = get_last_image_date(img_path, fntempl)
 
     startdate = pd.to_datetime(startdate)
     enddate = pd.to_datetime(enddate)

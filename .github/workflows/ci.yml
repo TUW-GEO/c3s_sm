@@ -67,6 +67,8 @@ jobs:
           fi
           pip install -e .[testing]
       - name: Run all tests
+        env:
+          CDS_APIKEY: ${{ secrets.CDS_APIKEY }}
         shell: bash -l {0}
         run: |      
           pytest

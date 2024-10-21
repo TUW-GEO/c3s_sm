@@ -256,3 +256,15 @@ def update_ts_summary_file(data_path, props=None, collect_cov=False, **kwargs):
         yaml.dump(props, f, default_flow_style=False, sort_keys=False)
 
     return props
+
+
+def delete_empty_directories(path: str):
+    """
+    Delete empty dirs in path
+    """
+    for root, dirs, files in os.walk(path, topdown=False):
+        for dir_name in dirs:
+            dir_path = os.path.join(root, dir_name)
+            # Check if the directory is empty
+            if not os.listdir(dir_path):
+                os.rmdir(dir_path)

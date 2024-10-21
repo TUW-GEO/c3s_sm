@@ -16,7 +16,7 @@ from repurpose.process import parallel_process
 import traceback
 
 from c3s_sm.const import variable_lut, freq_lut, check_api_read
-from c3s_sm.misc import update_image_summary_file
+from c3s_sm.misc import update_image_summary_file, delete_empty_directories
 
 
 def logger(fname, level=logging.DEBUG, verbose=False):
@@ -97,7 +97,7 @@ def download_c3ssm(c,
             raise ValueError(
                 "Cannot establish connection to CDS. Please set up"
                 "your CDS API key as described at "
-                "https://cds.climate.copernicus.eu/api-how-to")
+                "https://cds.climate.copernicus.eu/how-to-api")
 
         os.makedirs(target_dir, exist_ok=True)
 
@@ -320,6 +320,8 @@ def download_and_extract(target_path,
         backend='threading',
         logger_name='dl_logger',
         show_progress_bars=True)
+
+    delete_empty_directories(target_path)
 
     try:
         update_image_summary_file(target_path)
