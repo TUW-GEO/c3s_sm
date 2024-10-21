@@ -43,7 +43,9 @@ def test_download_with_token():
                + ['-e', '2022-07-31'] \
                + ['--product', 'combined'] \
                + ['--freq', 'monthly'] \
-               + ['--version', 'v202212']
+               + ['--version', 'v202212'] \
+               + ['--cds_token', os.environ['CDS_APIKEY']]
+
         subprocess.call(['c3s_sm', 'download', *args])
         files = os.listdir(os.path.join(outpath, '2022'))
         assert len(files) == 2
