@@ -11,9 +11,9 @@ dotrc = os.environ.get('CDSAPI_RC', os.path.join(Path.home(), '.cdsapirc'))
 
 def check_api_read() -> bool:
     if not os.path.isfile(dotrc):
-        url = os.environ.get('CDSAPI_URL')
+        url = os.environ.get('CDSAPI_URL') or cds_api_url
         key = os.environ.get('CDSAPI_KEY')
-        if (url is None ) or (key is None):
+        if (url is None) or (key is None):
             raise ValueError(
                 'CDS API KEY or .cdsapirc file not found, '
                 'download will not work! '

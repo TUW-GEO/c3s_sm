@@ -294,7 +294,7 @@ def cli_reshuffle(img_path, ts_path, startdate, enddate, parameters, land,
     if startdate is None:
         startdate = get_first_image_date(img_path, fntempl)
     if enddate is None:
-        enddate = get_last_image_date(ts_path, fntempl)
+        enddate = get_last_image_date(img_path, fntempl)
 
     startdate = pd.to_datetime(startdate)
     enddate = pd.to_datetime(enddate)

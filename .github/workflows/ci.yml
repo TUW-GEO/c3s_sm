@@ -58,6 +58,8 @@ jobs:
           which pip
           which python
       - name: Install dependencies and package
+        env:
+          CDS_APIKEY: ${{ secrets.CDS_APIKEY }}
         shell: bash -l {0}
         run: |
           # On macos pykdtree was built with OpenMP (C-level parallelization library) support

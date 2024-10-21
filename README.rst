@@ -1,6 +1,6 @@
-============
+======
 c3s_sm
-============
+======
 
 |ci| |cov| |pip| |doc|
 
@@ -44,6 +44,39 @@ either pass your credentials directly on the command line (which might be
 unsafe) or set up a `.cdsapirc` file in your home directory (recommended).
 Please see the description at https://cds.climate.copernicus.eu/how-to-api.
 
+Quickstart
+==========
+Download image data from CDS using the c3s_sm shell command
+
+.. code-block:: shell
+
+    c3s_sm download /tmp/c3s/img -s 2023-09-01 -e 2023-10-31 -v v202212
+
+... and convert them to time series
+
+.. code-block:: shell
+
+    c3s_sm reshuffle /tmp/c3s/img /tmp/c3s/ts
+
+Finally, in python, read the time series data for a location as pandas
+DataFrame.
+
+.. code-block:: python
+
+    >> from c3s_sm.interface import C3STs
+    >> ds = C3STs('/tmp/c3s/ts')
+    >> ts = ds.read(18, 48)
+
+                      sm  sm_uncertainty  flag  ...  mode  sensor            t0
+    2023-09-01  0.222125        0.014661     0  ...     2     544  19601.100348
+    2023-09-02  0.213480        0.011166     0  ...     3   38432  19602.051628
+    2023-09-03  0.197324        0.014661     0  ...     3   33312  19602.945730
+                  ...             ...   ...  ...   ...     ...           ...
+    2023-10-29  0.265275        0.013192     0  ...     3   37408  19658.955236
+    2023-10-30  0.256964        0.011166     0  ...     3   38432  19660.085144
+    2023-10-31  0.241187        0.014661     0  ...     3   33312  19660.945730
+
+
 Tutorials
 =========
 
@@ -64,6 +97,10 @@ with a spatial sampling of 0.25 degrees.
 
 Build Docker image
 ==================
+
+For operational implementations, this package and be installed in a
+docker container.
+
 - Check out the repo at the branch/tag/commit you want build
 - Make sure you have docker installed and run the command (replace the tag `latest`
   with something more meaningful, e.g. a matching version number)
