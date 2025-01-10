@@ -36,12 +36,13 @@ def test_download_dry_run():
                     # To run this test on Github, the CDS_APIKEY env secret must be set (also in ci.yml!)
                     reason="No environment variable CDS_APIKEY or "
                            ".cdsapirc file found.")
-def test_download_with_token():
+@pytest.mark.parametrize("prod", ["combined", "active", "passive"])
+def test_download_with_token(prod):
     with TemporaryDirectory() as outpath:
         args = [outpath] \
                + ['-s', '2022-06-01'] \
                + ['-e', '2022-07-31'] \
-               + ['--product', 'combined'] \
+               + ['--product', prod] \
                + ['--freq', 'monthly'] \
                + ['--version', 'v202212']
 
@@ -51,8 +52,9 @@ def test_download_with_token():
         subprocess.call(['c3s_sm', 'download', *args])
         files = os.listdir(os.path.join(outpath, '2022'))
         assert len(files) == 2
-        assert "C3S-SOILMOISTURE-L3S-SSMV-COMBINED-MONTHLY-20220601000000-TCDR-v202212.0.0.nc" in files
-        assert "C3S-SOILMOISTURE-L3S-SSMV-COMBINED-MONTHLY-20220701000000-TCDR-v202212.0.0.nc" in files
+        u = "S" if prod == "active" else "V"
+        assert f"C3S-SOILMOISTURE-L3S-SSM{u}-{prod.upper()}-MONTHLY-20220601000000-TCDR-v202212.0.0.nc" in files
+        assert f"C3S-SOILMOISTURE-L3S-SSM{u}-{prod.upper()}-MONTHLY-20220701000000-TCDR-v202212.0.0.nc" in files
 
         ovr = read_summary_yml(outpath)
         assert ovr['period_from'] == '2022-06-01'
