@@ -45,7 +45,7 @@ from c3s_sm.const import fntempl as _default_template, check_api_read, cds_api_u
     "-v",
     '--version',
     type=click.STRING,
-    default="v202212",
+    default="v202312",
     help="The C3S SM product version to download. "
     "Choose one that is on the CDS: "
     "e.g. deprecated_v20191, v201706, v201812, "

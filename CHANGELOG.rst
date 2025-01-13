@@ -10,6 +10,7 @@ Version 0.3.2
 =============
 - Fixed an issue when downloading activate data, because the variable
  keyword in the API has changed (`soil_moisture_saturation` -> `surface_soil_moisture`)
+- The default version for download is now v202312
 
 Version 0.3.1
 =============
