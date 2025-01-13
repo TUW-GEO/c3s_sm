@@ -43,7 +43,7 @@ variable_lut = {
         'type_of_sensor': 'passive'
     },
     'active': {
-        'variable': 'soil_moisture_saturation',
+        'variable': 'surface_soil_moisture',
         'type_of_sensor': 'active'
     }
 }

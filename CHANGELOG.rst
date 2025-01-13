@@ -4,8 +4,12 @@ Changelog
 
 Unreleased Changes
 ==================
-
 -
+
+Version 0.3.2
+=============
+- Fixed an issue when downloading activate data, because the variable
+ keyword in the API has changed (`soil_moisture_saturation` -> `surface_soil_moisture`)
 
 Version 0.3.1
 =============
