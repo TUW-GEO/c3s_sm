@@ -38,7 +38,7 @@ def test_download_dry_run():
                            ".cdsapirc file found.")
 @pytest.mark.parametrize("prod", ["combined", "active", "passive"])
 def test_download_with_token(prod):
-    with TemporaryDirectory() as outpath:
+    with (TemporaryDirectory() as outpath):
         args = [outpath] \
                + ['-s', '2022-06-01'] \
                + ['-e', '2022-07-31'] \
@@ -60,3 +60,20 @@ def test_download_with_token(prod):
         assert ovr['period_from'] == '2022-06-01'
         assert ovr['period_to'] == '2022-07-01'
         assert ovr['version'] == 'v202212'
+
+        # Check the update command without actually downloading anything
+        args = subprocess.run(['c3s_sm', 'update_img', outpath,
+                                    "--dry-run", "True"],
+                                    text=True, stdout=subprocess.PIPE)
+
+        path, sd, tagg, vers, p =  args.stdout\
+                                       .replace("\n", "")\
+                                       .split(' ')
+
+        assert path == outpath
+        assert sd == "2022-08-01T00:00:00"
+        assert tagg == "monthly"
+        assert vers == "v202212"
+        assert p == prod
+
+        print(args)

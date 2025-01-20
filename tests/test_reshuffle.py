@@ -7,7 +7,7 @@ import numpy as np
 import numpy.testing as nptest
 from netCDF4 import Dataset
 
-from c3s_sm.misc import img_infer_file_props, read_summary_yml
+from c3s_sm.misc import img_infer_file_props, read_summary_yml, _default_template
 from c3s_sm.interface import C3STs
 from c3s_sm.reshuffle import img2ts, extend_ts
 import pandas as pd
@@ -131,6 +131,19 @@ def test_reshuffle_ICDR_monthly_single_param(meta, interface):
             if freq is not None:
                 params += ['--freq', str(freq)]
             subprocess.call(['c3s_sm', 'update_ts', *params])
+            update_args = subprocess.run(
+                ['c3s_sm', 'update_ts', *params, "--dry-run", "True"],
+                     text=True, stdout=subprocess.PIPE)
+
+            imgpath, tspath, tagg, templ = update_args.stdout \
+                .replace("\n", "") \
+                .split(' ')
+            assert imgpath == inpath
+            assert tspath == ts_path
+            assert tagg == str(freq)
+            assert templ == _default_template
+
+
         elif interface == "python":
             img2ts(inpath, ts_path, startdate, enddate,
                    bbox=[-10, 40, 10, 50], ignore_meta=ignore_meta,
@@ -173,3 +186,6 @@ def test_reshuffle_ICDR_monthly_single_param(meta, interface):
             assert props['sensor_type'] == 'unknown'
 
         ds.close()
+
+
+
