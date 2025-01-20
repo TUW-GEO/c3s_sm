@@ -4,7 +4,8 @@ Changelog
 
 Unreleased Changes
 ==================
--
+- Add dry-run option to update commands (img and ts) that return the chosen
+  options.
 
 Version 0.3.2
 =============
