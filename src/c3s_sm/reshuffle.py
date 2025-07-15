@@ -148,7 +148,7 @@ def img2ts(img_path,
            land_points=True,
            bbox=None,
            cells=None,
-           ignore_meta=False,
+           ignore_meta=True,
            fntempl=_default_template,
            overwrite=False,
            imgbuffer=250,
@@ -181,7 +181,7 @@ def img2ts(img_path,
     cells: tuple, optional (default: None)
         To limit the processing to certain cells. This option is incompatible
         with the bbox keyword.
-    ignore_meta : bool, optional (default: False)
+    ignore_meta : bool, optional (default: True)
         Ignore metadata and reshuffle only the values. Can be used e.g. if a
         version is not yet supported.
     fntempl: str, optional (default: see :const:`c3s_sm.const.fntempl`)

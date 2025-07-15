@@ -50,6 +50,7 @@ def test_reshuffle_TCDR_daily_multiple_params(interface):
                    + ['-e', enddate] \
                    + ['-p', 'sm', '-p', 'sm_uncertainty'] \
                    + ['--land', 'True'] \
+                   + ['--ignore_meta', 'False'] \
                    + ['--bbox', '70', '10', '80', '20'] \
                    + ['--n_proc', str(n_proc)]
             subprocess.call(['c3s_sm', 'reshuffle', *args])

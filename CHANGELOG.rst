@@ -6,6 +6,8 @@ Unreleased Changes
 ==================
 - Add dry-run option to update commands (img and ts) that return the chosen
   options.
+- Added templates for RZSM and FT products templates
+- Ignore_meta is on by default for time series generation
 
 Version 0.3.2
 =============

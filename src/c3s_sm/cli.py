@@ -236,7 +236,7 @@ def cli_update_img(path, fntempl, cds_token=None, dry_run=False):
 @click.option(
     '--ignore_meta',
     type=click.BOOL,
-    default=False,
+    default=True,
     help="True or False | Activate to NOT transfer netcdf attributes"
     " from images into time series files. E.g. for unsupported "
     "data versions.")
