@@ -309,7 +309,7 @@ def img2ts(img_path,
         'img_path': img_path,
         'cells': None if cells is None else list(cells),
         'bbox': None if bbox is None else list(bbox),
-        "fntempl": fntempl,
+        "fntempl": input_dataset.fname_templ,
         'ignore_meta': ignore_meta
     }
 

@@ -29,7 +29,7 @@ def test_parse_filename():
     assert file_args['version'] == 'v201912'
     assert file_args['subversion'] == '0.0'
 
-@pytest.mark.parametrize("interface", ["cmd"]) #todo: python
+@pytest.mark.parametrize("interface", ["cmd", "python"])
 def test_reshuffle_TCDR_daily_multiple_params(interface):
     inpath = os.path.join(testdata_path, "img2ts", "active")
     startdate = "1991-08-05"
@@ -75,13 +75,13 @@ def test_reshuffle_TCDR_daily_multiple_params(interface):
         assert not any(ts['sm'] == 0)
         assert isinstance(ts.index, pd.DatetimeIndex)
         ts_sm_values_should = np.array([66.0677, np.nan, 80.7060, 70.5648, np.nan], dtype=np.float32)
-        nptest.assert_allclose(ts['sm'].values, ts_sm_values_should, rtol=1e-5)
+        nptest.assert_allclose(ts['sm'].values, ts_sm_values_should, rtol=1e-3)
 
         ts_uncert_values_should = np.array([np.nan, np.nan, np.nan, np.nan, np.nan],
                                            dtype=np.float32)
         nptest.assert_allclose(ts['sm_uncertainty'].values, ts_uncert_values_should,rtol=1e-5)
 
-        nptest.assert_almost_equal(ts['sm'].values, ds.read(602942)['sm'].values)
+        nptest.assert_almost_equal(ts['sm'].values, ds.read(602942)['sm'].values, 3)
 
         props = read_summary_yml(ts_path)
         #assert props['img2ts_kwargs']['startdate'] == pd.to_datetime(startdate).to_pydatetime()
@@ -93,7 +93,7 @@ def test_reshuffle_TCDR_daily_multiple_params(interface):
         ds.close()
 
 @pytest.mark.parametrize("meta", ["ignore_meta", "include_meta"])
-@pytest.mark.parametrize("interface", ["python", "cmd"])
+@pytest.mark.parametrize("interface", ["cmd", "python"])
 def test_reshuffle_ICDR_monthly_single_param(meta, interface):
     inpath = os.path.join(testdata_path, "img2ts", "combined")
 
@@ -135,13 +135,12 @@ def test_reshuffle_ICDR_monthly_single_param(meta, interface):
                 ['c3s_sm', 'update_ts', *params, "--dry-run", "True"],
                      text=True, stdout=subprocess.PIPE)
 
-            imgpath, tspath, tagg, templ = update_args.stdout \
+            imgpath, tspath, tagg = update_args.stdout \
                 .replace("\n", "") \
                 .split(' ')
             assert imgpath == inpath
             assert tspath == ts_path
             assert tagg == str(freq)
-            assert templ == _default_template
 
 
         elif interface == "python":

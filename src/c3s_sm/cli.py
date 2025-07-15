@@ -117,7 +117,7 @@ def cli_download(path,
 @click.option(
     "--fntempl",
     type=click.STRING,
-    default=_default_template,
+    default=None,
     help="In case files don't follow the usual naming convention, "
     "a custom template can be given here. Must contain fields "
     "`freq`, `prod`, `vers` and `datetime`")
@@ -155,6 +155,9 @@ def cli_update_img(path, fntempl, cds_token=None, dry_run=False):
     if cds_token is not None:
         os.environ["CDSAPI_KEY"] = cds_token
     check_api_read()
+
+    if fntempl is None:
+        fntempl = _default_template
 
     props = img_infer_file_props(path, fntempl=fntempl, start_from='last')
 
@@ -240,7 +243,7 @@ def cli_update_img(path, fntempl, cds_token=None, dry_run=False):
 @click.option(
     "--fntempl",
     type=click.STRING,
-    default=_default_template,
+    default=None,
     help="STRING CONTAINING {PLACEHOLDERS} | If image files don't "
     "follow the usual naming convention, a custom template can "
     "be given here. Must contain {placeholder} fields for "
@@ -292,6 +295,9 @@ def cli_reshuffle(img_path, ts_path, startdate, enddate, parameters, land,
     if len(parameters) == 0:
         parameters = None
 
+    if fntempl is None:
+        fntempl = _default_template
+
     if startdate is None:
         startdate = get_first_image_date(img_path, fntempl)
     if enddate is None:
@@ -336,7 +342,7 @@ def cli_reshuffle(img_path, ts_path, startdate, enddate, parameters, land,
 @click.option(
     "--fntempl",
     type=click.STRING,
-    default=_default_template,
+    default=None,
     help="In case image files don't follow the usual naming "
     "convention, a custom template can be given here. Must "
     "contain fields `freq`, `prod`, `vers` and `datetime`")
@@ -366,10 +372,13 @@ def cli_update_ts(img_path, ts_path, freq, fntempl, dry_run=False):
     if not dry_run:
         print(f"Extend time series in {ts_path} with image data from {img_path}")
 
+    if fntempl is None:
+        fntempl = _default_template
+
     extend_ts(img_path, ts_path, fntempl=fntempl, freq=freq)
 
     if dry_run:
-        print(img_path, ts_path, freq, fntempl)
+        print(img_path, ts_path, freq)
 
 @click.group(short_help="C3S SM Command Line Programs.")
 def c3s_sm():
