@@ -28,6 +28,7 @@ from c3s_sm.misc import (
     update_ts_summary_file,
     read_summary_yml,
     update_image_summary_file,
+    _parse
 )
 
 
@@ -48,7 +49,7 @@ def parse_filename(data_dir, fntempl=_default_template):
     ----------
     inroot : str
         Input root directory
-    fntempl: str, optional (default: :const:`c3s_sm.const.fntempl`)
+    fntempl: List[str], optional (default: :const:`c3s_sm.const.fntempl`)
         Filename template
 
     Returns
@@ -57,18 +58,16 @@ def parse_filename(data_dir, fntempl=_default_template):
         Parsed arguments from file name
     file_vars : list
         Names of parameters in the first detected file
+    t: str
+        The template that was finally used
     """
 
     for curr, subdirs, files in os.walk(data_dir):
-        for f in sorted(files):
-            file_args = parse(fntempl, f)
-            if file_args is None:
-                continue
-            else:
-                file_args = file_args.named
-                file_args['datetime'] = '{datetime}'
-                file_vars = Dataset(os.path.join(curr, f)).variables.keys()
-                return file_args, list(file_vars)
+        file_args, t, f = _parse(files, fntempl)
+        if file_args is not None:
+            file_args['datetime'] = '{datetime}'
+            file_vars = Dataset(os.path.join(curr, f)).variables.keys()
+            return file_args, list(file_vars), t
 
     raise IOError('No file name in passed directory fits to template')
 
@@ -215,7 +214,7 @@ def img2ts(img_path,
         grid = grid.subgrid_from_cells(cells)
 
     if parameters is None:
-        file_args, file_vars = parse_filename(img_path, fntempl=fntempl)
+        file_args, file_vars, fntempl = parse_filename(img_path, fntempl=fntempl)
         parameters = [p for p in file_vars if p not in ['lat', 'lon', 'time']]
 
     startdate = pd.to_datetime(startdate).to_pydatetime()

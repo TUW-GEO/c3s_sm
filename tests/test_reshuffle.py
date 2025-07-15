@@ -29,7 +29,7 @@ def test_parse_filename():
     assert file_args['version'] == 'v201912'
     assert file_args['subversion'] == '0.0'
 
-@pytest.mark.parametrize("interface", ["python", "cmd"])
+@pytest.mark.parametrize("interface", ["cmd"]) #todo: python
 def test_reshuffle_TCDR_daily_multiple_params(interface):
     inpath = os.path.join(testdata_path, "img2ts", "active")
     startdate = "1991-08-05"

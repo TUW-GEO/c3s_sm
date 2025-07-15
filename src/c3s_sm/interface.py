@@ -20,10 +20,10 @@ import warnings
 from netCDF4 import Dataset
 from pynetcf.time_series import GriddedNcOrthoMultiTs
 from datetime import datetime
-from parse import parse
 from cadati.dekad import dekad_index, dekad_startdate_from_date
 
 from c3s_sm.const import fntempl
+from c3s_sm.misc import _parse
 
 _default_fillvalues = {'sm': np.nan, 'sm_uncertainty': np.nan, 't0': np.nan}
 
@@ -288,8 +288,10 @@ class C3S_Nc_Img_Stack(MultiTemporalImageBase):
                     name, in case that multiple files are found.
                 - sort_first: uses the first file when sorted by file name
                     in case that multiple files are found.
-        fntempl: str, optional
+        fntempl: str or list[str], optional
             Filename template to parse datetime from.
+            If a list is passed, the templates will be applied in order
+            until one matches.
         subpath_templ : list or None, optional (default: None)
             List of subdirectory names to build file paths.
             e.g. ['%Y'] if files are stored in subdirs by year.
@@ -308,7 +310,15 @@ class C3S_Nc_Img_Stack(MultiTemporalImageBase):
             'fillval': fillval
         }
 
-        self.fname_args = self._parse_filename(fntempl)
+        if isinstance(fntempl, str):
+            fntempl = [fntempl]
+
+        self.fname_args, fntempl = self._parse_filename(fntempl)
+
+        if self.fname_args is None:
+            raise IOError("No file in the given directory matches any of the "
+                          "C3S SM filename templates.")
+
         self.solve_ambiguity = solve_ambiguity
         fn_args = self.fname_args.copy()
         # it's ok if the following fields are missing in the template
@@ -375,24 +385,28 @@ class C3S_Nc_Img_Stack(MultiTemporalImageBase):
 
         Parameters
         -------
-        template : str
-            Template for all files in the passed directory.
+        template : str or List[str]
+            List of possible template for all files in the passed directory.
 
         Returns
         -------
-        parse_result : parse.Result
+        parse_result : dict
             Parsed content of filename string from filename template.
+        template: str
+            The fitting template
         """
+        if isinstance(template, str):
+            template = [template]
 
         for curr, subdirs, files in os.walk(self.data_path):
-            for f in files:
-                file_args = parse(template, f)
-                if file_args is None:
-                    continue
-                else:
-                    file_args = file_args.named
-                    file_args['datetime'] = '{datetime}'
-                    return file_args
+            if len(files) == 0:
+                continue
+            file_args, t, _ = _parse(files, template)
+            if file_args is None:
+                continue
+            else:
+                file_args['datetime'] = '{datetime}'
+                return file_args, t
 
         raise IOError('No file name in passed directory fits to template')
 
