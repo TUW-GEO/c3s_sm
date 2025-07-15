@@ -64,6 +64,6 @@ startdates = {
 
 fntempl = [
     "C3S-SOILMOISTURE-L3S-SSM{unit}-{product}-{freq}-{datetime}-{record}-{version}.{subversion}.nc",
-    "C3S-RZSM-L3S-RZSM{unit}-{product}-{freq}-{datetime}-{record}-{version}.{subversion}.nc",
+    "C3S-RZSM-L3S-{product}{unit}-{freq}-{datetime}-{record}-{version}.{subversion}.nc",
     "C3S-SOILMOISTURE-L3S-{product}-{freq}-{datetime}-{record}-{version}.{subversion}.nc"
 ]
