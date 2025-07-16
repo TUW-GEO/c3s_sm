@@ -61,9 +61,12 @@ def test_download_with_token(prod):
         assert ovr['period_to'] == '2022-07-01'
         assert ovr['version'] == 'v202212'
 
+        args = ["--dry-run", "True"]
+        if not os.path.exists(dotrc):
+           args += ['--cds_token', os.environ['CDS_APIKEY']]
+
         # Check the update command without actually downloading anything
-        args = subprocess.run(['c3s_sm', 'update_img', outpath,
-                                    "--dry-run", "True"],
+        args = subprocess.run(['c3s_sm', 'update_img', outpath] + args,
                                     text=True, stdout=subprocess.PIPE)
 
         path, sd, tagg, vers, p =  args.stdout\
