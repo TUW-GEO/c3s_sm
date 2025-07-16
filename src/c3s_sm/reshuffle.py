@@ -11,7 +11,6 @@ from datetime import datetime
 import pandas as pd
 import pygeogrids
 from smecv_grid.grid import SMECV_Grid_v052
-from parse import parse
 from netCDF4 import Dataset
 import numpy as np
 from dateutil.relativedelta import relativedelta
@@ -28,6 +27,7 @@ from c3s_sm.misc import (
     update_ts_summary_file,
     read_summary_yml,
     update_image_summary_file,
+    _parse
 )
 
 
@@ -48,7 +48,7 @@ def parse_filename(data_dir, fntempl=_default_template):
     ----------
     inroot : str
         Input root directory
-    fntempl: str, optional (default: :const:`c3s_sm.const.fntempl`)
+    fntempl: List[str], optional (default: :const:`c3s_sm.const.fntempl`)
         Filename template
 
     Returns
@@ -57,18 +57,16 @@ def parse_filename(data_dir, fntempl=_default_template):
         Parsed arguments from file name
     file_vars : list
         Names of parameters in the first detected file
+    t: str
+        The template that was finally used
     """
 
     for curr, subdirs, files in os.walk(data_dir):
-        for f in sorted(files):
-            file_args = parse(fntempl, f)
-            if file_args is None:
-                continue
-            else:
-                file_args = file_args.named
-                file_args['datetime'] = '{datetime}'
-                file_vars = Dataset(os.path.join(curr, f)).variables.keys()
-                return file_args, list(file_vars)
+        file_args, t, f = _parse(files, fntempl)
+        if file_args is not None:
+            file_args['datetime'] = '{datetime}'
+            file_vars = Dataset(os.path.join(curr, f)).variables.keys()
+            return file_args, list(file_vars), t
 
     raise IOError('No file name in passed directory fits to template')
 
@@ -149,7 +147,7 @@ def img2ts(img_path,
            land_points=True,
            bbox=None,
            cells=None,
-           ignore_meta=False,
+           ignore_meta=True,
            fntempl=_default_template,
            overwrite=False,
            imgbuffer=250,
@@ -182,7 +180,7 @@ def img2ts(img_path,
     cells: tuple, optional (default: None)
         To limit the processing to certain cells. This option is incompatible
         with the bbox keyword.
-    ignore_meta : bool, optional (default: False)
+    ignore_meta : bool, optional (default: True)
         Ignore metadata and reshuffle only the values. Can be used e.g. if a
         version is not yet supported.
     fntempl: str, optional (default: see :const:`c3s_sm.const.fntempl`)
@@ -215,7 +213,7 @@ def img2ts(img_path,
         grid = grid.subgrid_from_cells(cells)
 
     if parameters is None:
-        file_args, file_vars = parse_filename(img_path, fntempl=fntempl)
+        file_args, file_vars, fntempl = parse_filename(img_path, fntempl=fntempl)
         parameters = [p for p in file_vars if p not in ['lat', 'lon', 'time']]
 
     startdate = pd.to_datetime(startdate).to_pydatetime()
@@ -273,6 +271,8 @@ def img2ts(img_path,
 
     if not os.path.exists(ts_path):
         os.makedirs(ts_path)
+
+    fntempl = input_dataset.fname_templ
 
     # secret switch to circumvent imagebase connection (to speed up tests)
     if os.environ.get("C3S_SM_NO_IMAGE_BASE_CONNECTION", "0") == "1":

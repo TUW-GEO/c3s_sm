@@ -2,6 +2,7 @@ import os
 import warnings
 from glob import glob
 import pandas as pd
+from typing import Union, List
 import yaml
 from parse import parse
 from c3s_sm.const import fntempl as _default_template
@@ -65,14 +66,33 @@ def collect_ts_cov(data_path: str, n_proc=1, progressbar=False):
 
     return periods, parameters
 
+def _parse(files, fntempl: List) -> (dict, str, str):
+    if len(fntempl) == 0:
+        raise ValueError("No templates given")
+
+    for f in files:
+        file_args = None
+        for t in fntempl:
+            file_args = parse(t, os.path.basename(f))
+            if file_args is not None:
+                break
+        if file_args is None:
+            continue
+        return file_args.named, t, f
+
+    return None, None, None
+
 
 def img_infer_file_props(path: str,
-                         fntempl: str = _default_template,
+                         fntempl: Union[str,List[str]] = _default_template,
                          start_from='last') -> dict:
     """
     Parse file names to retrieve properties from :func:`c3s_sm.const.fntempl`.
     Does not open any files.
     """
+    if isinstance(fntempl, str):
+        fntempl = [fntempl]
+
     files = glob(os.path.join(path, '**', '*.nc'), recursive=True)
     files.sort()
     if len(files) == 0:
@@ -86,11 +106,11 @@ def img_infer_file_props(path: str,
         else:
             raise NotImplementedError(f"`start_from` must be one of: "
                                       f"`first`, `last`.")
-        for f in files:
-            file_args = parse(fntempl, os.path.basename(f))
-            if file_args is None:
-                continue
-            return file_args.named
+
+        file_args, _, _ = _parse(files, fntempl)
+
+        if file_args is not None:
+            return file_args
 
     raise ValueError(f"No matching files for chosen template found in the "
                      f"directory {path}")

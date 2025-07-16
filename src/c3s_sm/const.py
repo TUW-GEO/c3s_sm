@@ -56,8 +56,14 @@ freq_lut = {
 
 startdates = {
     'combined': datetime(1978, 11, 1),
+    'ft': datetime(1978, 11, 1),
+    'rzsm': datetime(1978, 11, 1),
     'passive': datetime(1978, 11, 1),
     'active': datetime(1991, 8, 5)
 }
 
-fntempl = "C3S-SOILMOISTURE-L3S-SSM{unit}-{product}-{freq}-{datetime}-{record}-{version}.{subversion}.nc"
+fntempl = [
+    "C3S-SOILMOISTURE-L3S-SSM{unit}-{product}-{freq}-{datetime}-{record}-{version}.{subversion}.nc",
+    "C3S-RZSM-L3S-{product}{unit}-{freq}-{datetime}-{record}-{version}.{subversion}.nc",
+    "C3S-SOILMOISTURE-L3S-{product}-{freq}-{datetime}-{record}-{version}.{subversion}.nc"
+]

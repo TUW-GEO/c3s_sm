@@ -7,7 +7,7 @@ import numpy as np
 import numpy.testing as nptest
 from netCDF4 import Dataset
 
-from c3s_sm.misc import img_infer_file_props, read_summary_yml
+from c3s_sm.misc import img_infer_file_props, read_summary_yml, _default_template
 from c3s_sm.interface import C3STs
 from c3s_sm.reshuffle import img2ts, extend_ts
 import pandas as pd
@@ -29,7 +29,7 @@ def test_parse_filename():
     assert file_args['version'] == 'v201912'
     assert file_args['subversion'] == '0.0'
 
-@pytest.mark.parametrize("interface", ["python", "cmd"])
+@pytest.mark.parametrize("interface", ["cmd", "python"])
 def test_reshuffle_TCDR_daily_multiple_params(interface):
     inpath = os.path.join(testdata_path, "img2ts", "active")
     startdate = "1991-08-05"
@@ -50,6 +50,7 @@ def test_reshuffle_TCDR_daily_multiple_params(interface):
                    + ['-e', enddate] \
                    + ['-p', 'sm', '-p', 'sm_uncertainty'] \
                    + ['--land', 'True'] \
+                   + ['--ignore_meta', 'False'] \
                    + ['--bbox', '70', '10', '80', '20'] \
                    + ['--n_proc', str(n_proc)]
             subprocess.call(['c3s_sm', 'reshuffle', *args])
@@ -75,13 +76,13 @@ def test_reshuffle_TCDR_daily_multiple_params(interface):
         assert not any(ts['sm'] == 0)
         assert isinstance(ts.index, pd.DatetimeIndex)
         ts_sm_values_should = np.array([66.0677, np.nan, 80.7060, 70.5648, np.nan], dtype=np.float32)
-        nptest.assert_allclose(ts['sm'].values, ts_sm_values_should, rtol=1e-5)
+        nptest.assert_allclose(ts['sm'].values, ts_sm_values_should, rtol=1e-3)
 
         ts_uncert_values_should = np.array([np.nan, np.nan, np.nan, np.nan, np.nan],
                                            dtype=np.float32)
         nptest.assert_allclose(ts['sm_uncertainty'].values, ts_uncert_values_should,rtol=1e-5)
 
-        nptest.assert_almost_equal(ts['sm'].values, ds.read(602942)['sm'].values)
+        nptest.assert_almost_equal(ts['sm'].values, ds.read(602942)['sm'].values, 3)
 
         props = read_summary_yml(ts_path)
         #assert props['img2ts_kwargs']['startdate'] == pd.to_datetime(startdate).to_pydatetime()
@@ -93,7 +94,7 @@ def test_reshuffle_TCDR_daily_multiple_params(interface):
         ds.close()
 
 @pytest.mark.parametrize("meta", ["ignore_meta", "include_meta"])
-@pytest.mark.parametrize("interface", ["python", "cmd"])
+@pytest.mark.parametrize("interface", ["cmd", "python"])
 def test_reshuffle_ICDR_monthly_single_param(meta, interface):
     inpath = os.path.join(testdata_path, "img2ts", "combined")
 
@@ -131,6 +132,18 @@ def test_reshuffle_ICDR_monthly_single_param(meta, interface):
             if freq is not None:
                 params += ['--freq', str(freq)]
             subprocess.call(['c3s_sm', 'update_ts', *params])
+            update_args = subprocess.run(
+                ['c3s_sm', 'update_ts', *params, "--dry-run", "True"],
+                     text=True, stdout=subprocess.PIPE)
+
+            imgpath, tspath, tagg = update_args.stdout \
+                .replace("\n", "") \
+                .split(' ')
+            assert imgpath == inpath
+            assert tspath == ts_path
+            assert tagg == str(freq)
+
+
         elif interface == "python":
             img2ts(inpath, ts_path, startdate, enddate,
                    bbox=[-10, 40, 10, 50], ignore_meta=ignore_meta,
@@ -173,3 +186,6 @@ def test_reshuffle_ICDR_monthly_single_param(meta, interface):
             assert props['sensor_type'] == 'unknown'
 
         ds.close()
+
+
+

@@ -117,7 +117,7 @@ def cli_download(path,
 @click.option(
     "--fntempl",
     type=click.STRING,
-    default=_default_template,
+    default=None,
     help="In case files don't follow the usual naming convention, "
     "a custom template can be given here. Must contain fields "
     "`freq`, `prod`, `vers` and `datetime`")
@@ -128,7 +128,11 @@ def cli_download(path,
     help="To identify with the CDS. Required if no .cdsapirc file exists in "
          "the home directory (see documentation). You can find your token/key "
          "on your CDS user profile page.")
-def cli_update_img(path, fntempl, cds_token=None):
+@click.option("--dry-run", is_flag=False, default=False,
+              help="Do not actually download the images. Returns the "
+                   "chosen options instead. Can be grabbed with eg."
+                   "`read v1 v2 ... <<< $(c3s_sm update_img ...)`")
+def cli_update_img(path, fntempl, cds_token=None, dry_run=False):
     """
     Extend a locally existing C3S SM record by downloading new files that
     don't yet exist locally.
@@ -152,6 +156,9 @@ def cli_update_img(path, fntempl, cds_token=None):
         os.environ["CDSAPI_KEY"] = cds_token
     check_api_read()
 
+    if fntempl is None:
+        fntempl = _default_template
+
     props = img_infer_file_props(path, fntempl=fntempl, start_from='last')
 
     freq = props['freq'].lower()
@@ -160,19 +167,25 @@ def cli_update_img(path, fntempl, cds_token=None):
 
     startdate = first_missing_date(props['datetime'], freq=freq)
 
-    print(
-        f"Update C3S SM images: "
-        f"Fetching latest data for C3S SM CDR/ICDR {freq} {product} {version} "
-        f"after {startdate.isoformat()} into {path}.")
+    if not dry_run:
+        print(
+            f"Update C3S SM images: "
+            f"Fetching latest data for C3S SM CDR/ICDR {freq} {product} {version} "
+            f"after {startdate.isoformat()} into {path}.")
 
-    download_and_extract(
+    _ = download_and_extract(
         path,
         startdate=startdate,
         freq=freq,
         version=version,
         product=product,
-        keep_original=False)
+        keep_original=False,
+        dry_run=dry_run)
 
+    if dry_run:
+        # You can grab those with eg ``
+        print(path, str(startdate).replace(' ', 'T'), freq,
+              version, product)
 
 @click.command(
     "reshuffle",
@@ -223,14 +236,14 @@ def cli_update_img(path, fntempl, cds_token=None):
 @click.option(
     '--ignore_meta',
     type=click.BOOL,
-    default=False,
+    default=True,
     help="True or False | Activate to NOT transfer netcdf attributes"
     " from images into time series files. E.g. for unsupported "
     "data versions.")
 @click.option(
     "--fntempl",
     type=click.STRING,
-    default=_default_template,
+    default=None,
     help="STRING CONTAINING {PLACEHOLDERS} | If image files don't "
     "follow the usual naming convention, a custom template can "
     "be given here. Must contain {placeholder} fields for "
@@ -282,6 +295,9 @@ def cli_reshuffle(img_path, ts_path, startdate, enddate, parameters, land,
     if len(parameters) == 0:
         parameters = None
 
+    if fntempl is None:
+        fntempl = _default_template
+
     if startdate is None:
         startdate = get_first_image_date(img_path, fntempl)
     if enddate is None:
@@ -326,11 +342,15 @@ def cli_reshuffle(img_path, ts_path, startdate, enddate, parameters, land,
 @click.option(
     "--fntempl",
     type=click.STRING,
-    default=_default_template,
+    default=None,
     help="In case image files don't follow the usual naming "
     "convention, a custom template can be given here. Must "
     "contain fields `freq`, `prod`, `vers` and `datetime`")
-def cli_update_ts(img_path, ts_path, freq, fntempl):
+@click.option("--dry-run", is_flag=False, default=False,
+              help="Do not actually reshuffle the images. Returns the "
+                   "chosen options instead. Can be grabbed with eg."
+                   "`read p1 p2 freq fn <<< $(c3s_sm update_ts ...)`")
+def cli_update_ts(img_path, ts_path, freq, fntempl, dry_run=False):
     """
     Extend a locally existing C3S SM time series record by appending new data
     from the image files. This will detect the time range of the time series
@@ -349,9 +369,16 @@ def cli_update_ts(img_path, ts_path, freq, fntempl):
     # The docstring above is slightly different to the normal python one to
     # display it properly on the command line.
 
-    print(f"Extend time series in {ts_path} with image data from {img_path}")
+    if not dry_run:
+        print(f"Extend time series in {ts_path} with image data from {img_path}")
+
+    if fntempl is None:
+        fntempl = _default_template
+
     extend_ts(img_path, ts_path, fntempl=fntempl, freq=freq)
 
+    if dry_run:
+        print(img_path, ts_path, freq)
 
 @click.group(short_help="C3S SM Command Line Programs.")
 def c3s_sm():

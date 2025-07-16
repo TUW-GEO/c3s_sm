@@ -1,3 +1,4 @@
+import time
 from tempfile import TemporaryDirectory
 import pandas as pd
 import os
@@ -48,8 +49,16 @@ def test_download_with_token(prod):
 
         if not os.path.exists(dotrc):
            args += ['--cds_token', os.environ['CDS_APIKEY']]
+        print(len(os.environ['CDS_APIKEY']))
+        r = subprocess.call(['c3s_sm', 'download', *args],
+                            env=os.environ.copy())
+        assert r == 0
+        print(os.listdir(outpath))
 
-        subprocess.call(['c3s_sm', 'download', *args])
+        for f in os.listdir(os.path.join(outpath, '000_log')):
+            with open(os.path.join(outpath, '000_log', f), 'r') as fc:
+                print(fc.read())
+
         files = os.listdir(os.path.join(outpath, '2022'))
         assert len(files) == 2
         u = "S" if prod == "active" else "V"
@@ -60,3 +69,26 @@ def test_download_with_token(prod):
         assert ovr['period_from'] == '2022-06-01'
         assert ovr['period_to'] == '2022-07-01'
         assert ovr['version'] == 'v202212'
+
+        args = ["--dry-run", "True"]
+        if not os.path.exists(dotrc):
+           args += ['--cds_token', os.environ['CDS_APIKEY']]
+
+
+        # Check the update command without actually downloading anything
+        r = subprocess.run(['c3s_sm', 'update_img', outpath] + args,
+                           text=True, stdout=subprocess.PIPE,
+                           env=os.environ.copy())
+
+        assert r.returncode == 0
+        path, sd, tagg, vers, p =  r.stdout\
+                                    .replace("\n", "")\
+                                    .split(' ')
+
+        assert path == outpath
+        assert sd == "2022-08-01T00:00:00"
+        assert tagg == "monthly"
+        assert vers == "v202212"
+        assert p == prod
+
+        print(args)
