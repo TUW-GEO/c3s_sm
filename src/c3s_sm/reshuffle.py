@@ -11,7 +11,6 @@ from datetime import datetime
 import pandas as pd
 import pygeogrids
 from smecv_grid.grid import SMECV_Grid_v052
-from parse import parse
 from netCDF4 import Dataset
 import numpy as np
 from dateutil.relativedelta import relativedelta
@@ -273,6 +272,8 @@ def img2ts(img_path,
     if not os.path.exists(ts_path):
         os.makedirs(ts_path)
 
+    fntempl = input_dataset.fname_templ
+
     # secret switch to circumvent imagebase connection (to speed up tests)
     if os.environ.get("C3S_SM_NO_IMAGE_BASE_CONNECTION", "0") == "1":
         pass
@@ -309,7 +310,7 @@ def img2ts(img_path,
         'img_path': img_path,
         'cells': None if cells is None else list(cells),
         'bbox': None if bbox is None else list(bbox),
-        "fntempl": input_dataset.fname_templ,
+        "fntempl": fntempl,
         'ignore_meta': ignore_meta
     }
 
