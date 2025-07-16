@@ -33,10 +33,13 @@ def test_download_dry_run():
         assert queries[1]['icdr']['request']['day'] == ['01', '02', '03', '04', '05']
         assert queries[1]['icdr']['request']['version'] == 'v202212'
 
-@pytest.mark.skipif(("CDS_APIKEY" not in os.environ) and not os.path.exists(dotrc),
+@pytest.mark.skipif(("CDS_APIKEY" not in os.environ) and
+                    not os.path.exists(dotrc),
                     # To run this test on Github, the CDS_APIKEY env secret must be set (also in ci.yml!)
                     reason="No environment variable CDS_APIKEY or "
                            ".cdsapirc file found.")
+@pytest.mark.skipif(("CDS_APIKEY" in os.environ and len(os.environ["CDS_APIKEY"]) == 0),
+                    reason="The environment variable CDS_APIKEY is empty.")
 @pytest.mark.parametrize("prod", ["combined", "active", "passive"])
 def test_download_with_token(prod):
     with TemporaryDirectory() as outpath:
@@ -49,9 +52,8 @@ def test_download_with_token(prod):
 
         if not os.path.exists(dotrc):
            args += ['--cds_token', os.environ['CDS_APIKEY']]
-        print(len(os.environ['CDS_APIKEY']))
-        r = subprocess.call(['c3s_sm', 'download', *args],
-                            env=os.environ.copy())
+
+        r = subprocess.call(['c3s_sm', 'download', *args])
         assert r == 0
         print(os.listdir(outpath))
 
@@ -73,7 +75,6 @@ def test_download_with_token(prod):
         args = ["--dry-run", "True"]
         if not os.path.exists(dotrc):
            args += ['--cds_token', os.environ['CDS_APIKEY']]
-
 
         # Check the update command without actually downloading anything
         r = subprocess.run(['c3s_sm', 'update_img', outpath] + args,
