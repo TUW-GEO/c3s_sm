@@ -1,3 +1,4 @@
+import time
 from tempfile import TemporaryDirectory
 import pandas as pd
 import os
@@ -49,7 +50,11 @@ def test_download_with_token(prod):
         if not os.path.exists(dotrc):
            args += ['--cds_token', os.environ['CDS_APIKEY']]
 
-        subprocess.call(['c3s_sm', 'download', *args])
+        r = None
+        r = subprocess.call(['c3s_sm', 'download', *args])
+        while r is None:
+            time.sleep(1)
+
         files = os.listdir(os.path.join(outpath, '2022'))
         assert len(files) == 2
         u = "S" if prod == "active" else "V"
@@ -65,11 +70,15 @@ def test_download_with_token(prod):
         if not os.path.exists(dotrc):
            args += ['--cds_token', os.environ['CDS_APIKEY']]
 
+        r = None
         # Check the update command without actually downloading anything
-        args = subprocess.run(['c3s_sm', 'update_img', outpath] + args,
+        r = subprocess.run(['c3s_sm', 'update_img', outpath] + args,
                                     text=True, stdout=subprocess.PIPE)
 
-        path, sd, tagg, vers, p =  args.stdout\
+        while r is None:
+            time.sleep(1)
+
+        path, sd, tagg, vers, p =  r.stdout\
                                        .replace("\n", "")\
                                        .split(' ')
 
