@@ -49,7 +49,7 @@ def test_download_with_token(prod):
 
         if not os.path.exists(dotrc):
            args += ['--cds_token', os.environ['CDS_APIKEY']]
-
+        print(args)
         r = subprocess.call(['c3s_sm', 'download', *args],
                             env=os.environ.copy())
         assert r == 0
