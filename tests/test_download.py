@@ -50,10 +50,9 @@ def test_download_with_token(prod):
         if not os.path.exists(dotrc):
            args += ['--cds_token', os.environ['CDS_APIKEY']]
 
-        r = None
-        r = subprocess.call(['c3s_sm', 'download', *args])
-        while r is None:
-            time.sleep(1)
+        r = subprocess.call(['c3s_sm', 'download', *args],
+                            env=os.environ.copy())
+        assert r == 0
 
         files = os.listdir(os.path.join(outpath, '2022'))
         assert len(files) == 2
@@ -70,14 +69,13 @@ def test_download_with_token(prod):
         if not os.path.exists(dotrc):
            args += ['--cds_token', os.environ['CDS_APIKEY']]
 
-        r = None
+
         # Check the update command without actually downloading anything
         r = subprocess.run(['c3s_sm', 'update_img', outpath] + args,
-                                    text=True, stdout=subprocess.PIPE)
+                                    text=True, stdout=subprocess.PIPE,
+                           env=os.environ.copy())
 
-        while r is None:
-            time.sleep(1)
-
+        assert r.returncode == 0
         path, sd, tagg, vers, p =  r.stdout\
                                        .replace("\n", "")\
                                        .split(' ')
