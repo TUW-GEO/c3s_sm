@@ -54,6 +54,11 @@ def test_download_with_token(prod):
                             env=os.environ.copy())
         assert r == 0
         print(os.listdir(outpath))
+
+        for f in os.listdir(os.path.join(outpath, '000_log')):
+            with open(os.path.join(outpath, '000_log', f), 'r') as fc:
+                print(fc.read())
+
         files = os.listdir(os.path.join(outpath, '2022'))
         assert len(files) == 2
         u = "S" if prod == "active" else "V"
