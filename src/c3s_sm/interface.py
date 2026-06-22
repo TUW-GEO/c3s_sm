@@ -595,23 +595,3 @@ class C3STs(GriddedNcOrthoMultiTs):
     def write_ts(self, *args, **kwargs):
         pass
 
-
-if __name__ == '__main__':
-    import matplotlib.pyplot as plt
-
-    path_new = "/home/wpreimes/shares/climers/Projects/C3S2_313c/07_data/C3S_v202505/063_img2ts/combined-daily"
-    path_old = "/home/wpreimes/shares/climers/Datapool/C3S/02_processed/v202312/combined-daily-ts"
-
-    lon, lat = -100, 37
-
-    reader_old = C3STs(path_old)
-    ts_old = reader_old.read(lon, lat)
-    reader_new = C3STs(path_new)
-    ts_new = reader_new.read(lon, lat)
-
-    fig, ax = plt.subplots()
-    ts_old.sm.plot(ax=ax, color='blue', marker='o', linewidth=0, markerfacecolor='None')
-    ts_new.sm.plot(ax=ax, color='green', marker='.', linewidth=0)
-
-    plt.show(block=True)
-
