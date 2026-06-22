@@ -35,21 +35,29 @@ def check_api_read() -> bool:
 
 variable_lut = {
     'combined': {
-        'variable': 'volumetric_surface_soil_moisture',
-        'type_of_sensor': 'combined_passive_and_active'
+        'variable': 'surface_soil_moisture_volumetric',
+        'type_of_sensor': 'combined'
     },
     'passive': {
-        'variable': 'volumetric_surface_soil_moisture',
+        'variable': 'surface_soil_moisture_volumetric',
         'type_of_sensor': 'passive'
     },
     'active': {
-        'variable': 'surface_soil_moisture',
+        'variable': 'surface_soil_moisture_saturation',
         'type_of_sensor': 'active'
+    },
+    'ft': {
+        'variable': 'freeze_thaw_classification',
+        'type_of_sensor': None
+    },
+    'rzsm': {
+        'variable': 'root_zone_soil_moisture_volumetric',
+        'type_of_sensor': None
     }
 }
 
 freq_lut = {
-    'daily': 'day_average',
+    'daily': 'daily',
     'dekadal': '10_day_average',
     'monthly': 'month_average'
 }
@@ -64,6 +72,6 @@ startdates = {
 
 fntempl = [
     "C3S-SOILMOISTURE-L3S-SSM{unit}-{product}-{freq}-{datetime}-{record}-{version}.{subversion}.nc",
-    "C3S-RZSM-L3S-{product}{unit}-{freq}-{datetime}-{record}-{version}.{subversion}.nc",
+    "C3S-{product}-L3S-RZSM{unit}-{freq}-{datetime}-{record}-{version}.{subversion}.nc",
     "C3S-SOILMOISTURE-L3S-{product}-{freq}-{datetime}-{record}-{version}.{subversion}.nc"
 ]

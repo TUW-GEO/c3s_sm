@@ -33,23 +33,25 @@ def test_download_dry_run():
         assert queries[1]['icdr']['request']['day'] == ['01', '02', '03', '04', '05']
         assert queries[1]['icdr']['request']['version'] == 'v202212'
 
-@pytest.mark.skipif(("CDS_APIKEY" not in os.environ) and not os.path.exists(dotrc),
+@pytest.mark.skipif(("CDS_APIKEY" not in os.environ) and (not os.path.exists(dotrc)),
                     # To run this test on Github, the CDS_APIKEY env secret must be set (also in ci.yml!)
                     reason="No environment variable CDS_APIKEY or "
                            ".cdsapirc file found.")
-@pytest.mark.parametrize("prod", ["combined", "active", "passive"])
+@pytest.mark.parametrize("prod", ["combined", "active", "passive", "ft", "rzsm"])
 def test_download_with_token(prod):
     with TemporaryDirectory() as outpath:
+        e = ['-e', '2022-07-31'] if prod != "ft" else ['-e', '2022-06-10']
+        freq = ['--freq', 'monthly'] if prod != "ft" else ['--freq', 'daily']
         args = [outpath] \
                + ['-s', '2022-06-01'] \
-               + ['-e', '2022-07-31'] \
+               + e \
                + ['--product', prod] \
-               + ['--freq', 'monthly'] \
-               + ['--version', 'v202212']
+               + freq \
+               + ['--version', 'v202505']
 
         if not os.path.exists(dotrc):
            args += ['--cds_token', os.environ['CDS_APIKEY']]
-        print(len(os.environ['CDS_APIKEY']))
+
         r = subprocess.call(['c3s_sm', 'download', *args],
                             env=os.environ.copy())
         assert r == 0
@@ -60,15 +62,31 @@ def test_download_with_token(prod):
                 print(fc.read())
 
         files = os.listdir(os.path.join(outpath, '2022'))
-        assert len(files) == 2
-        u = "S" if prod == "active" else "V"
-        assert f"C3S-SOILMOISTURE-L3S-SSM{u}-{prod.upper()}-MONTHLY-20220601000000-TCDR-v202212.0.0.nc" in files
-        assert f"C3S-SOILMOISTURE-L3S-SSM{u}-{prod.upper()}-MONTHLY-20220701000000-TCDR-v202212.0.0.nc" in files
-
         ovr = read_summary_yml(outpath)
-        assert ovr['period_from'] == '2022-06-01'
-        assert ovr['period_to'] == '2022-07-01'
-        assert ovr['version'] == 'v202212'
+
+        if prod == "ft":
+            assert len(files) == 10
+            assert "C3S-SOILMOISTURE-L3S-FT-DAILY-20220601000000-TCDR-v202505.0.0.nc" in files
+            assert "C3S-SOILMOISTURE-L3S-FT-DAILY-20220610000000-TCDR-v202505.0.0.nc" in files
+            assert ovr['period_from'] == '2022-06-01'
+            assert ovr['period_to'] == '2022-06-10'
+            assert ovr['version'] == 'v202505'
+        elif prod == "rzsm":
+            assert len(files) == 2
+            assert f"C3S-RZSM-L3S-RZSMV-MONTHLY-20220601000000-TCDR-v202505.0.0.nc" in files
+            assert f"C3S-RZSM-L3S-RZSMV-MONTHLY-20220701000000-TCDR-v202505.0.0.nc" in files
+            assert ovr['period_from'] == '2022-06-01'
+            assert ovr['period_to'] == '2022-07-01'
+            assert ovr['version'] == 'v202505'
+        else:
+            assert len(files) == 2
+            u = "S" if prod == "active" else "V"
+            assert f"C3S-SOILMOISTURE-L3S-SSM{u}-{prod.upper()}-MONTHLY-20220601000000-TCDR-v202505.0.0.nc" in files
+            assert f"C3S-SOILMOISTURE-L3S-SSM{u}-{prod.upper()}-MONTHLY-20220701000000-TCDR-v202505.0.0.nc" in files
+            assert ovr['period_from'] == '2022-06-01'
+            assert ovr['period_to'] == '2022-07-01'
+            assert ovr['version'] == 'v202505'
+
 
         args = ["--dry-run", "True"]
         if not os.path.exists(dotrc):
@@ -86,9 +104,9 @@ def test_download_with_token(prod):
                                     .split(' ')
 
         assert path == outpath
-        assert sd == "2022-08-01T00:00:00"
-        assert tagg == "monthly"
-        assert vers == "v202212"
+        assert sd == "2022-08-01T00:00:00" if prod != "ft" else "2022-06-11T00:00:00"
+        assert tagg == "monthly" if prod != "ft" else "daily"
+        assert vers == "v202505"
         assert p == prod
 
         print(args)
