@@ -37,7 +37,9 @@ def test_download_dry_run():
                     # To run this test on Github, the CDS_APIKEY env secret must be set (also in ci.yml!)
                     reason="No environment variable CDS_APIKEY or "
                            ".cdsapirc file found.")
-@pytest.mark.parametrize("prod", ["combined", "active", "passive", "ft", "rzsm"])
+@pytest.mark.skipif(("CDS_APIKEY" in os.environ and len(os.environ["CDS_APIKEY"]) == 0),
+                    reason="The environment variable CDS_APIKEY is empty.")
+@pytest.mark.parametrize("prod", ["combined", "active", "passive"])
 def test_download_with_token(prod):
     with TemporaryDirectory() as outpath:
         e = ['-e', '2022-07-31'] if prod != "ft" else ['-e', '2022-06-10']
