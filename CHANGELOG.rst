@@ -4,10 +4,15 @@ Changelog
 
 Unreleased Changes
 ==================
+-
+
+Version 0.4.0
+=============
 - Add dry-run option to update commands (img and ts) that return the chosen
   options.
 - Added templates for RZSM and FT products templates
 - Ignore_meta is on by default for time series generation
+- Fixing keyword changes in CDS due to v202505 data updates
 
 Version 0.3.2
 =============
