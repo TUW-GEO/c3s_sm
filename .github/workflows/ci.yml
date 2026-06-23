@@ -44,13 +44,14 @@ jobs:
           lfs: true
       - name: Checkout LFS objects
         run: git lfs checkout
-      - uses: conda-incubator/setup-miniconda@v3
+      - uses: conda-incubator/setup-miniconda@v4
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
           channel-priority: flexible
           activate-environment: c3s_sm
-          auto-activate-base: false
+          auto-activate: false
+          conda-remove-defaults: true
       - name: Print environment infos
         shell: bash -l {0}
         run: |
