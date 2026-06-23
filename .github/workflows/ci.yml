@@ -51,7 +51,6 @@ jobs:
           channel-priority: flexible
           activate-environment: c3s_sm
           auto-activate: false
-          conda-remove-defaults: true
       - name: Print environment infos
         shell: bash -l {0}
         run: |
