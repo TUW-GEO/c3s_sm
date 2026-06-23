@@ -108,7 +108,7 @@ def test_C3STs_icdr_passive_decadal():
     nptest.assert_almost_equal(image.data['sm'][row, col], 0.21000, 4)
     assert(image.metadata['sm']['long_name'] == 'Volumetric Soil Moisture')
 
-@pytest.mark.parametrize("subgrid,",
+@pytest.mark.parametrize("subgrid",
                          [(SMECV_Grid_v052(None)),
                           (SMECV_Grid_v052('land')),
                           (SMECV_Grid_v052('landcover_class', subset_value=[10,11])),
