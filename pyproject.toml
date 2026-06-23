@@ -1,9 +1,104 @@
 [build-system]
-# AVOID CHANGING REQUIRES: IT WILL BE UPDATED BY PYSCAFFOLD!
-requires = ["setuptools>=46.1.0", "setuptools_scm[toml]>=5", "wheel"]
+requires = ["setuptools>=61", "setuptools_scm[toml]>=5", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "c3s_sm"
+description = "Readers and utilities for working with C3S Soil Moisture data"
+authors = [
+    {name = "TU Wien", email = "support@qa4sm.eu"}
+]
+license = {text = "MIT"}
+readme = {file = "README.rst", content-type = "text/x-rst"}
+requires-python = ">=3.6"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python"
+]
+dependencies = [
+    "importlib-metadata; python_version<\"3.8\"",
+    "numpy",
+    "pandas",
+    "pygeobase",
+    "pyresample",
+    "netCDF4",
+    "xarray",
+    "pynetcf>=0.2.2",
+    "repurpose>=0.12",
+    "parse",
+    "cadati",
+    "smecv_grid>=0.3",
+    "more_itertools",
+    "click",
+    "cdsapi>=0.7.3"
+]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://c3s-sm.readthedocs.io/en/latest/"
+Homepage = "https://github.com/TUW-GEO/c3s_sm"
+
+[project.optional-dependencies]
+docs = [
+    "matplotlib",
+    "jupyter",
+    "dask",
+    "sphinx<7",
+    "sphinx_rtd_theme",
+    "mock",
+    "pillow",
+    "recommonmark",
+    "readthedocs-sphinx-ext",
+    "myst_parser",
+    "nbsphinx"
+]
+testing = [
+    "pytest",
+    "pytest-cov"
+]
+
+[project.scripts]
+c3s_sm = "c3s_sm.cli:c3s_sm"
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["tests"]
+
 [tool.setuptools_scm]
-# For smarter version schemes and other configuration options,
-# check out https://github.com/pypa/setuptools_scm
 version_scheme = "no-guess-dev"
+
+[tool.pytest.ini_options]
+addopts = [
+    "--cov", "c3s_sm",
+    "--cov-report", "term-missing",
+    "--verbose"
+]
+norecursedirs = [
+    "dist",
+    "build",
+    ".tox"
+]
+testpaths = ["tests"]
+
+[tool.flake8]
+exclude = [
+    ".tox",
+    "build",
+    "dist",
+    ".eggs",
+    "docs/conf.py"
+]
+
+[tool.yapf]
+based_on_style = "yapf"
+indent_width = 4
+column_limit = 79
+
+[tool.pyscaffold]
+version = "4.5"
+package = "c3s_sm"
+extensions = ["no_skeleton"]
