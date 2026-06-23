@@ -594,3 +594,4 @@ class C3STs(GriddedNcOrthoMultiTs):
 
     def write_ts(self, *args, **kwargs):
         pass
+

@@ -59,7 +59,8 @@ def download_c3ssm(c,
     c : cdsapi.Client
         Client to pass the request to
     sensor : str
-        active, passive or combined. The sensor product to download
+        active, passive, combined, ft or rzsm.
+        The sensor product to download
     years : list
         Years for which data is downloaded ,e.g. [2017, 2018]
     months : list
@@ -110,19 +111,24 @@ def download_c3ssm(c,
 
         i = 0
         while not success[record] and i <= max_retries:
+            request = {
+                'variable': variable_lut[sensor]['variable'],
+                'type_of_sensor': variable_lut[sensor]['type_of_sensor'],
+                'time_aggregation': freq_lut[freq],
+                'format': 'zip',
+                'year': [str(y) for y in years],
+                'month': [str(m).zfill(2) for m in months],
+                'day': [str(d).zfill(2) for d in days],
+                'version': version,
+                'type_of_record': record
+            }
+
+            if request["type_of_sensor"] is None:
+                _ = request.pop('type_of_sensor')
+
             query = dict(
                 name='satellite-soil-moisture',
-                request={
-                    'variable': variable_lut[sensor]['variable'],
-                    'type_of_sensor': variable_lut[sensor]['type_of_sensor'],
-                    'time_aggregation': freq_lut[freq],
-                    'format': 'zip',
-                    'year': [str(y) for y in years],
-                    'month': [str(m).zfill(2) for m in months],
-                    'day': [str(d).zfill(2) for d in days],
-                    'version': version,
-                    'type_of_record': record
-                },
+                request=request,
                 target=dl_file)
 
             queries[record] = query

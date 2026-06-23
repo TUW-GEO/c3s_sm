@@ -7,6 +7,7 @@ from smecv_grid.grid import SMECV_Grid_v052
 import numpy as np
 import pytest
 
+
 def test_C3STs_tcdr_combined_daily():
     file = os.path.join(os.path.join(os.path.dirname(__file__),
                         'c3s_sm-test-data', 'img', 'TCDR', '060_dailyImages', 'combined', '2014',
@@ -66,7 +67,8 @@ def test_C3STs_icdr_combined_daily():
                         'C3S-SOILMOISTURE-L3S-SSMV-COMBINED-DAILY-20170701000000-ICDR-v201706.0.0.nc'))
 
 
-    ds = C3SImg(file, mode='r', parameters=['sm', 't0'], flatten=False, subgrid=SMECV_Grid_v052('land'))
+    ds = C3SImg(file, mode='r', parameters=['sm', 't0'], flatten=False,
+                subgrid=SMECV_Grid_v052('land'))
     image = ds.read()
 
     test_loc_lonlat = (16.375, 48.125)
@@ -106,7 +108,7 @@ def test_C3STs_icdr_passive_decadal():
     nptest.assert_almost_equal(image.data['sm'][row, col], 0.21000, 4)
     assert(image.metadata['sm']['long_name'] == 'Volumetric Soil Moisture')
 
-@pytest.mark.parametrize("subgrid,",
+@pytest.mark.parametrize("subgrid",
                          [(SMECV_Grid_v052(None)),
                           (SMECV_Grid_v052('land')),
                           (SMECV_Grid_v052('landcover_class', subset_value=[10,11])),

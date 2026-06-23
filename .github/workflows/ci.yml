@@ -31,11 +31,11 @@ jobs:
           - os: "macos-latest"
             python-version: '3.9'  # first supported
           - os: "ubuntu-latest"
-            python-version: '3.12'  # latest supported
+            python-version: '3.13'  # latest supported
           - os: "windows-latest"
-            python-version: '3.12'  # latest supported
+            python-version: '3.13'  # latest supported
           - os: "macos-latest"
-            python-version: '3.12'  # latest supported
+            python-version: '3.13'  # latest supported
     steps:
       - uses: actions/checkout@v4
         with:
@@ -78,46 +78,55 @@ jobs:
           mkdir -p artifacts
           filename=env_py${{ matrix.python-version }}_${{ matrix.os }}.yml
           conda env export --no-builds | grep -v "prefix" > artifacts/$filename
-      - name: Upload Coverage
-        shell: bash -l {0}
-        run: |
-          pip install coveralls && coveralls --service=github
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COVERALLS_FLAG_NAME: ${{ matrix.python-version }}
-          COVERALLS_PARALLEL: true
-      - name: Create wheel and dist package
-        shell: bash -l {0}
-        run: |
-          pip install setuptools_scm twine
-          if [ ${{ matrix.os }} == "windows-latest" ]
-          then
-            # build whls on windows
-            pip install wheel
-            python setup.py bdist_wheel --dist-dir artifacts/dist
-          else
-            # build dist on linux
-            python setup.py sdist --dist-dir artifacts/dist
-          fi
-          ls artifacts/dist
-          twine check artifacts/dist/*
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts-py${{ matrix.python-version }}-${{ matrix.os }}
           path: artifacts/*
+      - name: Upload Coverage
+        shell: bash -l {0}
+        run: |
+          pip install coveralls && coveralls --service=github-actions
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_FLAG_NAME: ${{ matrix.python-version }}
+          COVERALLS_PARALLEL: true
 
-  publish-coverage:
+  coveralls:
     name: Submit Coveralls 👚
     needs: build
     runs-on: ubuntu-latest
-    container: python:3-slim
     steps:
-      - name: Finished
+      - name: Finalize Coveralls Parallel Build
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+        continue-on-error: true
+
+  package:
+    name: Build sdist & wheel 📦
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
+          fetch-depth: 0  # needed for setuptools_scm to determine version
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Build sdist and wheel
         run: |
-          pip3 install --upgrade coveralls && coveralls --service=github --finish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          pip install build twine
+          python -m build
+          ls -la dist/
+          twine check dist/*
+      - name: Upload distribution artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: dist
+          path: dist/
 
   publish-pypi-package:
     name: Publish PyPI 🚀
